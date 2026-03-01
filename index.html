@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Middle East — Foreign Military Bases & Conflicts</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { width: 100%; height: 100%; overflow: hidden; background: #262626; }
+    body { width: 100%; height: 100%; min-width: 100vw; min-height: 100vh; overflow: hidden; font-family: 'Inter', sans-serif; background: #262626; }
+    #map { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; min-width: 100%; min-height: 100%; background: #262626; }
+    .leaflet-container { background: #262626 !important; }
+
+    /* Title bar */
+    .title-bar {
+      position: absolute; top: 20px; left: 20px; z-index: 1000;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 16px; padding: 16px 22px;
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .title-bar h1 {
+      font-size: 17px; font-weight: 800; color: #f1f5f9;
+      letter-spacing: -0.02em; line-height: 1.2;
+    }
+    .title-bar .subtitle {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 6px; font-size: 11px; color: #64748b; font-weight: 500;
+    }
+    .title-bar .live-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #22c55e;
+      box-shadow: 0 0 6px #22c55e; animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 6px #22c55e; }
+      50% { opacity: 0.5; box-shadow: 0 0 12px #22c55e; }
+    }
+
+    /* Layer toggles */
+    .layer-toggles {
+      position: absolute; top: 20px; right: 20px; z-index: 1000;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .layer-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 16px; border: none; border-radius: 12px;
+      font-family: inherit; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.25s ease;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+    .layer-btn .btn-icon { font-size: 14px; line-height: 1; }
+    .layer-btn .btn-count {
+      margin-left: auto; font-size: 10px; font-weight: 700;
+      background: rgba(255,255,255,0.15); padding: 2px 7px;
+      border-radius: 20px; min-width: 22px; text-align: center;
+    }
+    .layer-btn.military {
+      background: rgba(59, 130, 246, 0.15); color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .layer-btn.military.active {
+      background: rgba(59, 130, 246, 0.4); color: #fff;
+      border-color: rgba(59, 130, 246, 0.6);
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
+    }
+    .layer-btn.conflict {
+      background: rgba(239, 68, 68, 0.15); color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .layer-btn.conflict.active {
+      background: rgba(239, 68, 68, 0.4); color: #fff;
+      border-color: rgba(239, 68, 68, 0.6);
+      box-shadow: 0 4px 20px rgba(239, 68, 68, 0.25);
+    }
+    .layer-btn:hover { transform: translateY(-1px); filter: brightness(1.15); }
+    .layer-btn:active { transform: translateY(0); }
+
+    /* Stats bar (bottom-right, above zoom) */
+    .stats-bar {
+      position: absolute; bottom: 60px; right: 20px; z-index: 1000;
+      display: flex; flex-direction: column; gap: 4px; align-items: flex-end;
+    }
+    .stat-pill {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .stat-pill.bases-stat { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.2); }
+    .stat-pill.conflict-stat { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.2); }
+
+    .attr { position: absolute; bottom: 8px; right: 8px; z-index: 1000; font-size: 9px; color: rgba(148,163,184,0.35); }
+
+    /* Popups */
+    .leaflet-popup-content-wrapper {
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.95));
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      color: #e2e8f0; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(16px);
+    }
+    .leaflet-popup-tip { background: rgba(15, 23, 42, 0.98); }
+    .leaflet-popup-content { margin: 14px 16px; }
+    .popup-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .popup-header .popup-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .popup-header .popup-dot.base-dot { background: #3b82f6; box-shadow: 0 0 8px rgba(59,130,246,0.5); }
+    .popup-header .popup-dot.conflict-dot { background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.5); }
+    .popup-title { font-weight: 700; font-size: 14px; line-height: 1.3; color: #f1f5f9; }
+    .popup-divider { height: 1px; background: rgba(148,163,184,0.12); margin: 8px 0; }
+    .popup-meta { font-size: 12px; color: #94a3b8; line-height: 1.5; }
+    .popup-meta strong { color: #cbd5e1; }
+    .popup-tag {
+      display: inline-block; margin-top: 8px; padding: 3px 8px;
+      border-radius: 6px; font-size: 10px; font-weight: 600;
+    }
+    .popup-tag.base-tag { background: rgba(59,130,246,0.2); color: #93c5fd; }
+    .popup-tag.conflict-tag { background: rgba(239,68,68,0.2); color: #fca5a5; }
+
+    /* Flag markers */
+    .flag-icon-wrap {
+      width: 30px; height: 22px; border-radius: 4px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6), 0 0 0 1.5px rgba(255,255,255,0.3);
+      background: #1e293b; transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .flag-icon-wrap:hover { transform: scale(1.15); box-shadow: 0 4px 16px rgba(0,0,0,0.8), 0 0 0 2px rgba(255,255,255,0.5); }
+    .flag-icon-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .flag-icon-wrap.un-flag {
+      width: 30px; height: 22px;
+      background: #4b69a3 url('https://upload.wikimedia.org/wikipedia/commons/2/2f/Flag_of_the_United_Nations.svg') center/cover no-repeat;
+    }
+    .leaflet-div-icon.flag-marker { background: none !important; border: none !important; }
+    .leaflet-div-icon.conflict-marker { background: none !important; border: none !important; }
+
+    /* Conflict icon: pulsing glow */
+    .gunfire-icon {
+      width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .gunfire-icon::before {
+      content: ''; position: absolute; inset: -4px; border-radius: 50%;
+      background: rgba(239, 68, 68, 0.2);
+      animation: conflict-pulse 2s ease-in-out infinite;
+    }
+    @keyframes conflict-pulse {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.5); opacity: 0; }
+    }
+
+    /* Cluster */
+    .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large {
+      background-color: rgba(59, 130, 246, 0.25) !important;
+    }
+    .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
+      background-color: rgba(59, 130, 246, 0.7) !important; color: #fff !important;
+      font-family: 'Inter', sans-serif !important; font-weight: 700 !important; font-size: 12px !important;
+    }
+
+    /* Zoom control */
+    .leaflet-control-zoom { border: none !important; border-radius: 12px !important; overflow: hidden !important; box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important; }
+    .leaflet-control-zoom a {
+      background: rgba(15, 23, 42, 0.9) !important; color: #94a3b8 !important;
+      border: none !important; width: 36px !important; height: 36px !important;
+      line-height: 36px !important; font-size: 16px !important;
+      transition: background 0.2s !important;
+    }
+    .leaflet-control-zoom a:hover { background: rgba(30, 41, 59, 0.95) !important; color: #e2e8f0 !important; }
+
+    /* Mobile responsive */
+    @media (max-width: 600px) {
+      .title-bar {
+        top: 10px; left: 10px; right: 10px;
+        padding: 10px 14px; border-radius: 12px;
+      }
+      .title-bar h1 { font-size: 14px; }
+      .title-bar .subtitle { font-size: 10px; margin-top: 4px; }
+      .layer-toggles {
+        top: auto; bottom: 70px; right: 10px; left: auto;
+        flex-direction: row; gap: 5px;
+      }
+      .layer-btn {
+        padding: 8px 10px; font-size: 11px; border-radius: 10px;
+        gap: 5px;
+      }
+      .layer-btn .btn-icon { font-size: 12px; }
+      .layer-btn .btn-count { font-size: 9px; padding: 1px 5px; }
+      .stats-bar {
+        bottom: 110px; right: 10px;
+      }
+      .stat-pill { font-size: 10px; padding: 4px 9px; }
+      .leaflet-control-zoom a {
+        width: 32px !important; height: 32px !important;
+        line-height: 32px !important; font-size: 14px !important;
+      }
+      .leaflet-popup-content-wrapper { border-radius: 10px; }
+      .leaflet-popup-content { margin: 10px 12px; }
+      .popup-title { font-size: 13px; }
+      .popup-meta { font-size: 11px; }
+    }
+    @media (max-width: 380px) {
+      .title-bar h1 { font-size: 12px; }
+      .layer-btn { padding: 6px 8px; font-size: 10px; }
+      .layer-btn .btn-count { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <div class="title-bar">
+    <h1>World Military & Conflict Map</h1>
+    <div class="subtitle">
+      <span class="live-dot"></span>
+      <span id="date-label"></span>
+    </div>
+  </div>
+
+  <div class="layer-toggles">
+    <button class="layer-btn military active" id="toggle-military">
+      <span class="btn-icon">&#127987;&#65039;</span> Military bases
+      <span class="btn-count" id="base-count">0</span>
+    </button>
+    <button class="layer-btn conflict" id="toggle-conflict">
+      <span class="btn-icon">&#128165;</span> War & fighting
+      <span class="btn-count" id="conflict-count">0</span>
+    </button>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-pill bases-stat"><span id="stat-bases">0</span> bases across <span id="stat-countries">0</span> countries</div>
+    <div class="stat-pill conflict-stat"><span id="stat-conflicts">0</span> active conflict zones</div>
+  </div>
+
+  <div class="attr">&copy; OpenStreetMap, CARTO</div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      var now = new Date();
+      document.getElementById('date-label').textContent =
+        months[now.getMonth()] + ' ' + now.getFullYear() + ' \u00B7 Click any marker for details';
+
+      function initMap() {
+        var meBounds = L.latLngBounds(L.latLng(-2, 10), L.latLng(38, 63));
+        var worldBounds = L.latLngBounds(L.latLng(-85, -180), L.latLng(85, 180));
+        var mapEl = document.getElementById('map');
+        var initMinZoom = Math.ceil(Math.log2(Math.max(mapEl.clientWidth, mapEl.clientHeight) / 256));
+        if (initMinZoom < 2) initMinZoom = 2;
+        var map = L.map('map', {
+          zoomControl: false,
+          minZoom: initMinZoom,
+          maxZoom: 18,
+          maxBounds: [[-90, -200], [90, 200]],
+          maxBoundsViscosity: 1,
+          zoomAnimation: true,
+          markerZoomAnimation: true
+        });
+
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; OpenStreetMap, CARTO',
+          noWrap: false,
+          maxZoom: 19
+        }).addTo(map);
+
+        map.fitBounds(meBounds, { padding: [40, 40], animate: true });
+        setTimeout(function () {
+          map.invalidateSize();
+          map.flyToBounds(meBounds, { padding: [40, 40], duration: 1.2 });
+          var zoomForWorld = map.getBoundsZoom(worldBounds, false, L.point(0, 0));
+          map.setMinZoom(Math.max(2, zoomForWorld));
+        }, 100);
+
+        var bases = [
+          { coords: [32.98778, 34.59028], power: 'UK', baseName: 'RAF Akrotiri', hostCountry: 'Cyprus', detail: '~3,500 personnel | Typhoon & Tornado GR4 aircraft, Reaper drones | Signals intelligence station; weapons depot; runway 2,770m | Used for strikes on Yemen, Syria & Iraq.' },
+          { coords: [33.7734, 35.0174], power: 'UK', baseName: 'Dhekelia Cantonment', hostCountry: 'Cyprus', detail: '~1,500 personnel | Ayios Nikolaos signals intelligence station | Stores: small arms, ammunition, vehicles | Garrison includes infantry and signals units.' },
+          { coords: [35.1397, 33.1189], power: 'UN', baseName: 'UNIFIL HQ (Naqoura)', hostCountry: 'Lebanon', detail: '~10,000 troops from 50 countries | Armored vehicles, patrol boats, observation towers | Maritime Task Force with 6\u20138 warships | Buffer zone monitoring along Blue Line.' },
+          { coords: [35.945, 35.411667], power: 'Russia', baseName: 'Hmeimim Air Base', hostCountry: 'Syria', detail: '~4,000 personnel | Su-35, Su-34, Su-24 aircraft, Ka-52 attack helicopters | S-400 & S-300 air defense systems | 49-year lease; underground ammunition bunkers; ISR drones.' },
+          { coords: [35.875, 34.915], power: 'Russia', baseName: 'Tartus Naval Base', hostCountry: 'Syria', detail: '~1,700 personnel | Berths for 10 warships, submarine repair facility | Stores: naval munitions, torpedoes, cruise missiles | Russia\'s only Mediterranean naval base.' },
+          { coords: [38.61778, 33.50583], power: 'US', baseName: 'Al-Tanf Garrison', hostCountry: 'Syria', detail: '~200\u2013300 US troops + ~200 SOF | MRAPs, Humvees, HIMARS (rotational) | 55 km deconfliction zone | Counter-ISIS operations at Syria\u2013Iraq\u2013Jordan tri-border.' },
+          { coords: [36.6339, 35.9307], power: 'Turkey', baseName: 'Turkish bases (Idlib)', hostCountry: 'Syria', detail: '~10,000\u201315,000 Turkish troops | 60+ observation posts | M60 tanks, T-155 Firtina howitzers, armored vehicles | Drone operations (TB-2 Bayraktar); ammunition depots.' },
+          { coords: [44.347222, 36.526944], power: 'US', baseName: 'Harir Air Base', hostCountry: 'Iraq', detail: '~500\u2013800 US personnel | UH-60 Black Hawks, MQ-9 Reapers | C-RAM air defense | Special operations; ISR hub for counter-ISIS.' },
+          { coords: [44.4936, 33.2981], power: 'US', baseName: 'US presence Baghdad area', hostCountry: 'Iraq', detail: '~2,500 US personnel (embassy & advisors) | C-RAM Phalanx, Patriot systems | Armored vehicles, helicopters | Baghdad Diplomatic Support Center.' },
+          { coords: [36.78722, 31.83417], power: 'US', baseName: 'Muwaffaq Salti Air Base (Azraq)', hostCountry: 'Jordan', detail: '~2,500\u20133,000 US personnel | F-16s, F-15Es, MQ-9 Reapers, KC-135 tankers | THAAD & Patriot missile defense | 332nd Expeditionary Wing; primary strike base.' },
+          { coords: [47.575, 24.0577], power: 'US', baseName: 'Prince Sultan Air Base', hostCountry: 'Saudi Arabia', detail: '~2,500 US troops | F-22 Raptors, Patriot & THAAD systems | CAOC (Combined Air Ops Center) relocated here | Al Kharj; massive hangars and munitions storage.' },
+          { coords: [48.158, 28.878], power: 'US', baseName: 'Camp Arifjan', hostCountry: 'Kuwait', detail: '~13,000 US troops | US Army Central forward HQ | Pre-positioned stocks: 1,000+ vehicles (Abrams, Bradleys, Strykers) | APS-5 warehouses; largest Army depot in region.' },
+          { coords: [47.52056, 29.34667], power: 'US', baseName: 'Ali Al Salem Air Base', hostCountry: 'Kuwait', detail: '~5,000 US personnel | C-17, C-130 transports; F-16 rotations | USAF 386th AEW | Theater gateway for troops deploying to Iraq, Syria & Afghanistan.' },
+          { coords: [47.68, 29.76], power: 'US', baseName: 'Camp Buehring', hostCountry: 'Kuwait', detail: '~8,000\u201314,000 US troops | Brigade staging area; Udairi Range | Pre-positioned armor & artillery | Troop acclimation before forward deployment.' },
+          { coords: [51.3206, 25.1194], power: 'US', baseName: 'Al-Udeid Air Base', hostCountry: 'Qatar', detail: '~10,000 US troops | CENTCOM forward HQ; CAOC | B-52, KC-135, E-8 JSTARS, RQ-4 Global Hawk | Largest US air base in Middle East; 3,780m runway; munitions bunkers.' },
+          { coords: [50.6058, 26.2058], power: 'US', baseName: 'NSA Bahrain (Fifth Fleet)', hostCountry: 'Bahrain', detail: '~7,000 US military + contractors | US Fifth Fleet HQ; ~30 warships & submarines | P-8 Poseidon patrol aircraft | Naval munitions depot; Patriot battery.' },
+          { coords: [54.548, 24.248], power: 'US', baseName: 'Al Dhafra Air Base', hostCountry: 'UAE', detail: '~3,500 US personnel | F-22 Raptors, F-35s, RQ-4 Global Hawks, KC-10 tankers | THAAD missile defense battery | Runway 4,000m; advanced weapons storage.' },
+          { coords: [55.0731, 24.9894], power: 'US', baseName: 'Jebel Ali (naval port)', hostCountry: 'UAE', detail: '~500 US Navy personnel rotating | Aircraft carriers & destroyers dock regularly | Pier capable of hosting supercarriers | Largest port-of-call for US Navy outside the US.' },
+          { coords: [34.0, 30.27], power: 'UN', baseName: 'MFO Sinai (US part)', hostCountry: 'Egypt', detail: '~1,680 total (452 US troops) | 30+ remote observation posts | Armored vehicles, Blackhawk helicopters | Monitoring 1979 Egypt\u2013Israel peace treaty.' },
+          { coords: [35.42583, 37.00194], power: 'US', baseName: 'Incirlik Air Base', hostCountry: 'Turkey', detail: '~5,000 US personnel | ~50 B-61 nuclear bombs in underground vaults | F-15E, KC-135, A-10 rotations | NATO\'s key southern hub; 3,048m runway.' },
+          { coords: [51.45, 25.2], power: 'Turkey', baseName: 'Tariq Bin Ziyad base', hostCountry: 'Qatar', detail: '~3,000\u20135,000 Turkish troops | Armored vehicles, artillery, TB-2 Bayraktar drones | Turkey\'s largest Gulf base | Rapid deployment for Gulf, Red Sea & N. Africa.' },
+          { coords: [43.0855, 11.3237], power: 'US', baseName: 'Camp Lemonnier', hostCountry: 'Djibouti', detail: '~4,500 US military + contractors | MQ-9 Reapers, P-3 Orions, F-15Es | Only permanent US base in Africa | Ammunition & weapons depots; CJTF-HOA HQ.' },
+          { coords: [43.06082, 11.58747], power: 'China', baseName: 'PLA Support Base (Balbala)', hostCountry: 'Djibouti', detail: '~400\u20132,000 personnel (estimated) | Underground bunkers, pier for destroyers & supply ships | Armored vehicles, stores for 10,000 tons of supplies | China\'s first overseas base; helicopter pads.' },
+          { coords: [43.159, 11.547], power: 'France', baseName: 'Base A\u00e9rienne 188 / Heron', hostCountry: 'Djibouti', detail: '~1,500 French troops | Mirage 2000 fighters, SA 330 Puma helicopters | Armored vehicles, naval patrol craft | France\'s largest base in Africa; controls Bab el-Mandeb.' },
+          { coords: [43.09, 11.54], power: 'Japan', baseName: 'JSDF Base Djibouti', hostCountry: 'Djibouti', detail: '~180 JSDF personnel | P-3C Orion patrol aircraft (2 units) | Light vehicles and small arms | Japan\'s only overseas base; anti-piracy mission.' },
+          { coords: [43.16, 11.57], power: 'Italy', baseName: 'Base Amedeo Guillet', hostCountry: 'Djibouti', detail: '~300 Italian personnel | AW101 & NH90 helicopters, Predator drones | Light armor and logistics vehicles | Supports anti-piracy & Indian Ocean operations.' },
+          { coords: [20.0681, 32.1194], power: 'Russia', baseName: 'Russian / Wagner presence (east Libya)', hostCountry: 'Libya', detail: '~800\u20131,200 Africa Corps fighters | MiG-29, Su-24 aircraft at al-Jufra | Pantsir-S1 air defense, armored vehicles | Controls eastern oilfields; Mediterranean access.' },
+          { coords: [13.1914, 32.8872], power: 'Russia', baseName: 'Russian / Wagner presence (Tripoli area)', hostCountry: 'Libya', detail: '~400\u2013600 Africa Corps fighters | Technical vehicles, sniper equipment, mines | Supports western Libyan factions | Supply route from Syria via sea.' },
+          { coords: [45.268, 1.996], power: 'Turkey', baseName: 'Camp TURKSOM', hostCountry: 'Somalia', detail: '~200 Turkish military trainers + 1,500 capacity | Armored vehicles, small arms training facility | Turkey\'s largest overseas base (4 km\u00b2) | Trained 16,000+ Somali troops since 2017.' },
+          { coords: [45.3028, 2.0082], power: 'US', baseName: 'US-backed bases (Danab)', hostCountry: 'Somalia', detail: '~500 US advisors (rotational) | MQ-9 Reaper drones; AC-130 strike support | Light weapons, comms equipment | 5 FOBs supporting Somali Danab brigade vs al-Shabaab.' },
+          { coords: [44.997, 10.438], power: 'UAE', baseName: 'Berbera port & military use', hostCountry: 'Somaliland', detail: '~200\u2013300 UAE personnel | Deep-water port (400m pier); runway 4,140m | Armored vehicles, fuel & munitions storage | Forward staging for Yemen operations.' },
+          // ——— AFRICA (all countries) ———
+          // Kenya
+          { coords: [40.9017, -1.6500], power: 'US', baseName: 'Camp Simba (Manda Bay)', hostCountry: 'Kenya', detail: '~300 US military & contractors | MQ-9 Reapers, ISR aircraft | Small arms, comms equipment, C-RAM | Counter-al-Shabaab ops; Lamu County coast.' },
+          { coords: [39.6682, -4.0435], power: 'US', baseName: 'US presence Mombasa (port)', hostCountry: 'Kenya', detail: '~100\u2013200 US Navy rotating | Port for destroyer & supply ship visits | Fuel storage, repair facilities | Key Indian Ocean logistics node.' },
+          { coords: [36.9284, -1.1312], power: 'UK', baseName: 'BATUK (Nanyuki)', hostCountry: 'Kenya', detail: '~280 permanent UK staff + 6 battalions/year (10,000 troops rotate) | Land Rovers, armored vehicles | Ammunition, fuel, medical stores | Permanent garrison since 1964.' },
+          // Niger
+          { coords: [7.9928, 16.9664], power: 'Russia', baseName: 'Air Base 201 (Agadez)', hostCountry: 'Niger', detail: '~200\u2013400 Africa Corps troops | Former US MQ-9 drone hangars ($110M facility) | Radar systems, fuel depots, armored vehicles | Russia took over 2024 after US expelled.' },
+          { coords: [2.1098, 13.4810], power: 'Russia', baseName: 'Russia / Africa Corps (Niamey)', hostCountry: 'Niger', detail: '~300\u2013500 Africa Corps personnel | SA-22 air defense, technicals, small arms | Replaced US & French presence after 2023 coup | Advises junta military.' },
+          // Mali
+          { coords: [-8.0029, 12.6392], power: 'Russia', baseName: 'Russia / Africa Corps (Bamako area)', hostCountry: 'Mali', detail: '~1,000\u20131,200 Africa Corps fighters | Armored vehicles, Mi-17 helicopters (limited) | Small arms, RPGs, mortars | Combat ops in Sahel; replaced French Barkhane.' },
+          // Burkina Faso
+          { coords: [-1.5197, 12.3714], power: 'Russia', baseName: 'Russia / Africa Corps (Ouagadougou)', hostCountry: 'Burkina Faso', detail: '~300\u2013500 Africa Corps personnel | Technical vehicles, small arms, RPGs | Counter-jihadist ops alongside Burkinab\u00e8 army | Deployed since 2023 coup.' },
+          // Central African Republic
+          { coords: [18.5582, 4.3947], power: 'Russia', baseName: 'Russia / Africa Corps (Bangui)', hostCountry: 'Central African Republic', detail: '~1,500\u20132,000 troops | Armored vehicles, artillery, helicopters | Small arms, ammunition stores | Guards president & diamond/gold mining sites.' },
+          // Gabon
+          { coords: [9.4673, 0.3924], power: 'France', baseName: 'French Forces Gabon (Libreville)', hostCountry: 'Gabon', detail: '~350 French troops (reduced from 450) | Armored vehicles, light helicopters | Camp de Gaulle; weapons & fuel depot | Supports regional interventions in Gulf of Guinea.' },
+          // Mozambique
+          { coords: [40.5176, -12.9742], power: 'Rwanda', baseName: 'Rwandan forces (Cabo Delgado)', hostCountry: 'Mozambique', detail: '~4,000\u20135,000 Rwandan troops | Armored vehicles, mortars, MRAPs | Field hospitals, ammunition stores | Counter-ISM insurgency; deployed since 2021; controls key towns.' },
+          // Somalia (Egypt, new 2026)
+          { coords: [45.35, 2.05], power: 'Egypt', baseName: 'Egyptian AUSSOM deployment', hostCountry: 'Somalia', detail: '~5,000 Egyptian troops | Armored vehicles, artillery, naval support offshore | Ammunition & medical supplies | Deployed Feb 2026 under AU mission; counter al-Shabaab.' },
+          // ——— ASIA & PACIFIC ———
+          // Japan (US)
+          { coords: [139.3486, 35.7131], power: 'US', baseName: 'Yokota Air Base', hostCountry: 'Japan', detail: '~3,400 US personnel + 1,000 Japanese | C-130J transports, UH-1N helicopters, CV-22 Osprey | USFJ & 5th Air Force HQ | Stores: fuel, munitions, humanitarian supplies; western Tokyo.' },
+          { coords: [139.6544, 35.2835], power: 'US', baseName: 'US Fleet Activities Yokosuka', hostCountry: 'Japan', detail: '~11,000 military + 15,000 dependents | Home port for USS Ronald Reagan (CVN-76) carrier & 10+ warships | 7th Fleet HQ | Naval munitions, torpedoes; largest US naval base in W. Pacific.' },
+          { coords: [127.7675, 26.3516], power: 'US', baseName: 'Kadena Air Base', hostCountry: 'Japan (Okinawa)', detail: '~18,000 personnel (military + families) | F-15C/D Eagles, KC-135 tankers, E-3 AWACS, MQ-9 | 18th Wing (largest USAF combat wing in Pacific) | Nuclear-capable munitions storage; two 3,690m runways.' },
+          { coords: [132.2361, 34.1456], power: 'US', baseName: 'MCAS Iwakuni', hostCountry: 'Japan', detail: '~12,000 US Marines & Navy | F-35B Lightning II (16+), F/A-18 Hornets, EA-18G Growlers | Stores: aviation ordnance, fuel | Marine Corps\' premier air station in Asia-Pacific.' },
+          { coords: [129.7134, 33.1598], power: 'US', baseName: 'US Fleet Activities Sasebo', hostCountry: 'Japan', detail: '~5,400 US military | Home port for amphibious ships (USS America LHA-6 class) | Stores: naval munitions, missiles | Forward-deployed naval forces; Kyushu.' },
+          { coords: [140.9227, 40.7032], power: 'US', baseName: 'Misawa Air Base', hostCountry: 'Japan', detail: '~5,200 US personnel | F-16 Fighting Falcons (35th FW), P-8 Poseidons | NSA signals intelligence (ECHELON node) | Stores: nuclear-capable weapons vaults; northern Honshu.' },
+          // South Korea (US)
+          { coords: [127.0148, 36.9634], power: 'US', baseName: 'Camp Humphreys', hostCountry: 'South Korea', detail: '~28,500 total USFK (most here) | AH-64 Apaches, Black Hawks, Gray Eagles | Largest US overseas base (3,454 acres) | USFK & 8th Army HQ; THAAD battery; massive vehicle & ammo depot.' },
+          { coords: [127.0302, 37.0900], power: 'US', baseName: 'Osan Air Base', hostCountry: 'South Korea', detail: '~7,800 US personnel | F-16s (51st FW), A-10 Thunderbolts, U-2 spyplanes | Patriot missile batteries | Stores: tactical nuclear-capable ordnance; 40 km from DMZ.' },
+          { coords: [126.6161, 35.9032], power: 'US', baseName: 'Kunsan Air Base', hostCountry: 'South Korea', detail: '~2,800 US personnel | F-16 Fighting Falcons (8th FW "Wolf Pack") | Ammunition storage bunkers | Controls western Korea approach; 185 km from North Korean coast.' },
+          // Philippines (US EDCA sites)
+          { coords: [118.0515, 9.8546], power: 'US', baseName: 'Antonio Bautista AB (Palawan)', hostCountry: 'Philippines', detail: '~100\u2013200 US rotational | C-130 capable runway; pre-positioned fuel & ammo | Closest EDCA site to South China Sea / Spratlys (160 km) | Shelters, logistics warehouses under construction.' },
+          { coords: [120.5929, 15.4853], power: 'US', baseName: 'Basa Air Base', hostCountry: 'Philippines', detail: '~50\u2013150 US rotational | Runway under expansion for fighter operations | Pre-positioned fuel, munitions | EDCA site; central Luzon; 80 km NW of Manila.' },
+          { coords: [121.0795, 15.4763], power: 'US', baseName: 'Fort Magsaysay', hostCountry: 'Philippines', detail: '~100\u2013250 US rotational | Armored vehicle storage, weapons ranges | HIMARS, Patriot launchers (rotational) | Largest Philippine army reservation (27,000 hectares); EDCA site.' },
+          { coords: [121.7740, 18.1816], power: 'US', baseName: 'Lal-lo Airport', hostCountry: 'Philippines', detail: '~50\u2013100 US rotational | Runway being upgraded for military use | Pre-positioned fuel & comms | Northernmost EDCA site; faces Taiwan Strait (400 km).' },
+          // Guam (US)
+          { coords: [144.7937, 13.4443], power: 'US', baseName: 'Andersen Air Force Base', hostCountry: 'Guam (US)', detail: '~4,000 US personnel | B-52H, B-2 Spirit, B-1B bomber rotations; RQ-4 Global Hawks | Stores: 65+ munitions bunkers (conventional & nuclear-capable) | Strategic bomber hub; 3,413m runway.' },
+          { coords: [144.6371, 13.4413], power: 'US', baseName: 'Naval Base Guam', hostCountry: 'Guam (US)', detail: '~7,000 US personnel | 4\u20135 fast-attack submarines, surface combatants | New Marine Corps base under construction (Camp Blaz) | Apra Harbor; Tomahawk cruise missile stocks.' },
+          // Australia (US rotational)
+          { coords: [130.8456, -12.4634], power: 'US', baseName: 'RAAF Darwin (US rotational)', hostCountry: 'Australia', detail: '~2,500 US Marines (MRF-D) | MV-22 Ospreys, M777 howitzers, LAVs | Fuel & ammunition pre-positioned | Rotational deployment since 2012; expanding; N. Australia.' },
+          { coords: [136.7887, -23.7980], power: 'US', baseName: 'Pine Gap (joint facility)', hostCountry: 'Australia', detail: '~800 US & Australian personnel | 38 satellite tracking antennas / radomes | Stores: classified signals intelligence equipment | CIA\u2013NRO\u2013NSA SIGINT station; missile early warning; central Australia.' },
+          // Diego Garcia (Indian Ocean)
+          { coords: [72.4111, -7.3195], power: 'US', baseName: 'Diego Garcia (US\u2013UK)', hostCountry: 'British Indian Ocean Territory', detail: '~3,000\u20134,500 US & UK personnel | B-52, B-2 bomber staging; P-8 Poseidons | Stores: pre-positioned ships (13 cargo vessels with tanks, ammo, vehicles) | 3,659m runway; fuel farms; 99-year lease.' },
+          // Singapore
+          { coords: [103.8003, 1.4544], power: 'US', baseName: 'Sembawang / Changi (US access)', hostCountry: 'Singapore', detail: '~200 US Navy rotational | Littoral Combat Ships (LCS), P-8 Poseidon rotations | Pier space for aircraft carriers at Changi | Logistics Command; key Strait of Malacca chokepoint.' },
+          { coords: [103.7500, 1.4400], power: 'UK', baseName: 'British Defence Singapore Support Unit', hostCountry: 'Singapore', detail: '~100 UK personnel | Logistics & communication equipment | Fuel, ammunition stores (small) | Sembawang Wharves; supports Five Power Defence Arrangements.' },
+          // Brunei
+          { coords: [114.9301, 4.9310], power: 'UK', baseName: 'British Forces Brunei', hostCountry: 'Brunei', detail: '~900 UK troops (1st Battalion Royal Gurkha Rifles) | Armored vehicles, jungle warfare equipment | Weapons, ammunition, rations stockpile | UK\'s last permanent Far East base; jungle training.' },
+          // Cambodia (China)
+          { coords: [103.5355, 10.5130], power: 'China', baseName: 'Ream Naval Base (Chinese-built)', hostCountry: 'Cambodia', detail: '~Unknown PLA Navy personnel (estimated 200+) | 363m pier for frigates/destroyers, dry dock | Fuel storage, weapons maintenance facility | Chinese-built; opened 2025; potential PLA Navy rotation.' },
+          // Tajikistan (Russia)
+          { coords: [68.7870, 38.5598], power: 'Russia', baseName: '201st Military Base', hostCountry: 'Tajikistan', detail: '~7,000\u20139,000 Russian troops | T-72B3 tanks, BMP-2 IFVs, BTR-82A APCs, BM-21 Grad | Stores: ammunition depots, S-300 air defense | Russia\'s largest overseas base; 3 garrisons; near Afghan border.' },
+          // Kyrgyzstan (Russia)
+          { coords: [74.5464, 42.8556], power: 'Russia', baseName: 'Kant Air Base', hostCountry: 'Kyrgyzstan', detail: '~500 Russian personnel | Su-25 attack aircraft, Mi-8 helicopters | Ammunition and fuel reserves | CSTO rapid-reaction force staging; 20 km east of Bishkek.' },
+          // India (foreign facility)
+          { coords: [72.6342, 8.2935], power: 'India', baseName: 'INS Jatayu (Minicoy)', hostCountry: 'India (Lakshadweep)', detail: '~150\u2013300 Indian Navy personnel | Dornier 228 patrol aircraft, UAVs | Radar station, fuel depot | Indian Ocean surveillance; commissioned March 2025; Minicoy Island.' },
+          // South China Sea (China, artificial islands)
+          { coords: [112.9663, 9.8812], power: 'China', baseName: 'Fiery Cross Reef', hostCountry: 'South China Sea (disputed)', detail: '~200+ PLA personnel | 3,125m runway; HQ-9 SAMs, anti-ship cruise missiles, CIWS | Fighter-jet hangars (24 capacity), radar arrays | Stores: munitions bunkers, fuel tanks; 2.74 km\u00b2 island.' },
+          { coords: [114.0834, 10.3854], power: 'China', baseName: 'Subi Reef', hostCountry: 'South China Sea (disputed)', detail: '~200+ PLA personnel | 3,160m runway; point-defense weapons, radar | Hangars for 24 fighters, helipads | Stores: munitions, fuel; area 3.95 km\u00b2; Spratlys.' },
+          { coords: [113.8328, 9.5474], power: 'China', baseName: 'Mischief Reef', hostCountry: 'South China Sea (disputed)', detail: '~200+ PLA personnel | 2,700m runway; anti-aircraft guns, CIWS, radar | Hangars, communications domes | Stores: munitions, fuel; area 5.52 km\u00b2; within Philippines EEZ.' },
+          // Afghanistan
+          // ——— EUROPE ———
+          // Germany (US)
+          { coords: [7.6003, 49.4369], power: 'US', baseName: 'Ramstein Air Base', hostCountry: 'Germany', detail: '~9,000 US personnel + 5,000 dependents | C-130J, C-17, C-5M transports; KC-135 tankers | NATO Allied Air Command HQ | Stores: massive munitions depot; hospital (LRMC); largest US air base in Europe.' },
+          { coords: [6.7253, 49.2017], power: 'US', baseName: 'Spangdahlem Air Base', hostCountry: 'Germany', detail: '~4,000 US personnel | F-16 Fighting Falcons (52nd FW), MQ-9 Reapers | Stores: ~20 B-61 nuclear gravity bombs (estimated) | Hardened aircraft shelters; close air support.' },
+          { coords: [8.3260, 49.9423], power: 'US', baseName: 'USAG Wiesbaden', hostCountry: 'Germany', detail: '~4,200 US military + 7,000 civilians/families | US Army Europe & Africa HQ | Intelligence, signal & cyber units | Stores: vehicles, comms equipment; Hessen.' },
+          { coords: [11.9210, 49.6517], power: 'US', baseName: 'USAG Bavaria (Grafenw\u00f6hr)', hostCountry: 'Germany', detail: '~15,000 US military + families | M1 Abrams, Bradleys, Strykers (pre-positioned) | Largest US Army training area in Europe (233 km\u00b2) | Stores: APS-2 equipment sets worth $4B+; live fire ranges.' },
+          { coords: [9.1153, 48.7758], power: 'US', baseName: 'USAG Stuttgart (EUCOM HQ)', hostCountry: 'Germany', detail: '~2,000 US military + contractors | US European Command & AFRICOM HQ | Command & control systems, SCIF facilities | Patch Barracks & Kelley Barracks; strategic planning hub.' },
+          // Italy (US)
+          { coords: [14.2681, 40.8518], power: 'US', baseName: 'NSA Naples', hostCountry: 'Italy', detail: '~6,000 US personnel | US Naval Forces Europe/Africa HQ; NATO JFC Naples | P-8 Poseidon staging | Stores: naval weapons, Tomahawk missiles; supports 6th Fleet.' },
+          { coords: [12.5963, 46.0319], power: 'US', baseName: 'Aviano Air Base', hostCountry: 'Italy', detail: '~4,600 US personnel | F-16s (31st FW), transitioning to F-35A Lightning II | Stores: B-61 nuclear bombs (estimated ~20\u201340) | Hardened shelters; NE Italy; Cold War frontline base.' },
+          { coords: [14.9224, 37.4017], power: 'US', baseName: 'NAS Sigonella', hostCountry: 'Italy', detail: '~4,200 US military + 1,000 Italian | MQ-4C Triton, MQ-9 Reaper, P-8 Poseidon | Stores: aviation ordnance, anti-submarine munitions | "Hub of the Med"; Sicily; ISR center.' },
+          { coords: [10.3506, 43.6783], power: 'US', baseName: 'Camp Darby', hostCountry: 'Italy', detail: '~400 US personnel | 2,000+ pre-positioned vehicles: tanks, APCs, trucks | Stores: 1.3M+ artillery rounds, ammunition, rations | Largest US Army supply depot south of the Alps.' },
+          // UK (US)
+          { coords: [0.5610, 52.4093], power: 'US', baseName: 'RAF Lakenheath', hostCountry: 'United Kingdom', detail: '~4,500 US personnel | F-35A (1st operational EU deployment), F-15E Strike Eagles | 48th Fighter Wing — largest US combat wing in Europe | Stores: B-61 nuclear bombs (estimated); 2 runways.' },
+          { coords: [0.4864, 52.3614], power: 'US', baseName: 'RAF Mildenhall', hostCountry: 'United Kingdom', detail: '~3,200 US personnel | KC-135 Stratotankers (100th ARW), MC-130J Commando II | 352nd SOW (special operations) | Stores: jet fuel, munitions; refueling hub for Europe.' },
+          // Spain (US)
+          { coords: [-6.3496, 36.6461], power: 'US', baseName: 'Naval Station Rota', hostCountry: 'Spain', detail: '~3,000 US + 1,000 Spanish | 4 Aegis BMD destroyers home-ported (DDG-class) | Stores: SM-3 interceptor missiles, naval ordnance | Runway 3,900m; supports carrier ops; SW Spain.' },
+          { coords: [-2.3562, 36.8509], power: 'US', baseName: 'Mor\u00f3n Air Base', hostCountry: 'Spain', detail: '~2,200 US Marines | MV-22 Ospreys, KC-130J tankers, AH-1Z Vipers | SPMAGTF\u2013Crisis Response Africa | Stores: ammo, vehicles; rapid response for N. Africa & Mediterranean.' },
+          // Poland (US/NATO)
+          { coords: [17.8543, 52.3949], power: 'US', baseName: 'Powidz Air Base', hostCountry: 'Poland', detail: '~1,000\u20132,000 US rotational troops | M1A2 Abrams, Bradleys, AH-64 Apaches | APS site with pre-positioned heavy armor | NATO eastern flank; $170M logistics hub expansion.' },
+          { coords: [21.8959, 50.0771], power: 'US', baseName: 'Redzikowo (Aegis Ashore)', hostCountry: 'Poland', detail: '~300 US Navy personnel | Aegis Ashore missile defense: SM-3 Block IIA interceptors | AN/SPY-1 radar | BMD shield for Europe; operational Dec 2024; $4.4B program.' },
+          // Romania (US/NATO)
+          { coords: [28.7117, 44.3524], power: 'US', baseName: 'Mihail Kog\u0103lniceanu Air Base', hostCountry: 'Romania', detail: '~1,500\u20132,500 US rotational troops | F-16 rotations, MQ-9 Reapers | Stores: ammunition, vehicles, fuel | NATO eastern flank; Black Sea access; expanding to 10,000-capacity.' },
+          { coords: [24.2328, 43.9280], power: 'US', baseName: 'Deveselu (Aegis Ashore)', hostCountry: 'Romania', detail: '~500 US personnel | Aegis Ashore BMD: SM-3 Block IB interceptors | AN/SPY-1D radar | First European Aegis Ashore; operational since 2016; protects against MRBM/IRBM threats.' },
+          // Greece (US)
+          { coords: [24.1488, 35.5138], power: 'US', baseName: 'NSA Souda Bay', hostCountry: 'Greece', detail: '~1,200 US + Greek personnel | Berths for aircraft carriers & submarines | Stores: naval ordnance, jet fuel (NATO POL depot) | Crete; deepest natural harbor in Med; drone ops.' },
+          // Belgium (NATO)
+          { coords: [4.4219, 50.8503], power: 'US', baseName: 'NATO / SHAPE (Brussels\u2013Mons)', hostCountry: 'Belgium', detail: '~4,000 US personnel (across NATO missions) | Command & control systems, SCIF | NATO HQ Brussels; Supreme HQ Allied Powers Europe (Mons) | Stores: classified comms & intel equipment.' },
+          // Kosovo (US/NATO)
+          { coords: [21.1455, 42.5555], power: 'US', baseName: 'Camp Bondsteel', hostCountry: 'Kosovo', detail: '~7,000 NATO troops (~700 US) | Humvees, MRAPs, UH-60 Black Hawks | KFOR mission | 360-hectare base; detention facility; hospital; largest US base in Balkans.' },
+          // UK sovereign
+          { coords: [-5.3536, 36.1408], power: 'UK', baseName: 'Gibraltar (British Forces)', hostCountry: 'Gibraltar', detail: '~600 UK military | HMS Rooke naval base, RAF Gibraltar runway | 2 patrol vessels, naval fuel depot | Controls Strait of Gibraltar; tunnels store weapons & supplies.' },
+          // Russia (European bases)
+          { coords: [20.4943, 54.7104], power: 'Russia', baseName: 'Kaliningrad (Russian forces)', hostCountry: 'Russia (Kaliningrad)', detail: '~25,000\u201330,000 Russian military | Iskander-M nuclear-capable missiles, S-400 SAMs | Baltic Fleet: 2 frigates, 20+ corvettes, diesel submarines | Stores: Kh-47M2 Kinzhal missiles, nuclear warheads (est.).' },
+          { coords: [26.0139, 53.1318], power: 'Russia', baseName: 'Russian forces in Belarus', hostCountry: 'Belarus', detail: '~1,500 Russian troops + tactical nuclear weapons (deployed 2023) | S-400 battery, Iskander-M launchers | Voronovo radar station | Stores: nuclear warheads, ammunition; joint training center.' },
+          { coords: [43.8328, 40.7907], power: 'Russia', baseName: '102nd Military Base (Gyumri)', hostCountry: 'Armenia', detail: '~3,000\u20135,000 Russian troops | T-72B3 tanks, BMP-2 IFVs, S-300V SAMs | MiG-29 fighters (Erebuni air base) | Stores: ammunition, rockets; guards Armenian-Turkish border.' },
+          { coords: [40.1657, 43.0015], power: 'Russia', baseName: '7th Military Base (Abkhazia)', hostCountry: 'Georgia (Abkhazia)', detail: '~4,500 Russian personnel | T-72 tanks, BTR-80 APCs, BM-21 Grad MLRS | Stores: artillery shells, anti-aircraft munitions | Controls Georgian breakaway region since 2008.' },
+          { coords: [44.2295, 42.2267], power: 'Russia', baseName: '4th Military Base (South Ossetia)', hostCountry: 'Georgia (South Ossetia)', detail: '~3,500 Russian personnel | BTR-82A APCs, 2S3 Akatsiya howitzers | S-300 radar components | Stores: ammo depot; 40 km from Tbilisi; breakaway region since 2008.' },
+          { coords: [29.4654, 47.0225], power: 'Russia', baseName: 'Russian OGRF (Transnistria)', hostCountry: 'Moldova (Transnistria)', detail: '~1,500 Russian troops | Light armor, infantry weapons | Guards Cobasna ammo depot: ~20,000 tons of Soviet-era munitions | Stores: one of largest ammo depots in Europe; separatist region.' },
+          // Baltics (NATO enhanced forward presence)
+          { coords: [26.7251, 58.3780], power: 'UK', baseName: 'NATO EFP battlegroup (Estonia)', hostCountry: 'Estonia', detail: '~1,700 troops (UK-led, from 9 nations) | Challenger 2 tanks, Warrior IFVs, AS-90 howitzers | Stores: ammunition, anti-tank missiles | Tapa base; scaling to brigade-size.' },
+          { coords: [25.2798, 56.9460], power: 'US', baseName: 'NATO EFP battlegroup (Latvia)', hostCountry: 'Latvia', detail: '~1,500 troops (Canadian-led, US contributing) | Leopard 2 tanks, LAV-6, M777 howitzers | Stores: NATO ammo, Javelin ATGMs | \u0100da\u017ei base; scaling to brigade.' },
+          { coords: [24.0559, 54.6892], power: 'US', baseName: 'NATO EFP battlegroup (Lithuania)', hostCountry: 'Lithuania', detail: '~1,600 troops (German-led, US contributing) | Leopard 2A6 tanks, Pzh 2000 howitzers, Boxer IFVs | Stores: NATO ammunition, Stinger SAMs | Rukla base; Germany plans permanent brigade here.' },
+          // ——— SOUTH & CENTRAL AMERICA / CARIBBEAN ———
+          // Cuba
+          { coords: [-75.1324, 19.9022], power: 'US', baseName: 'Guantanamo Bay Naval Base', hostCountry: 'Cuba', detail: '~6,000 US military & contractors | Detention facility (30 detainees remaining) | Patrol boats, Marines, MWDs | 117 km\u00b2 base; oldest US overseas base (since 1903); desalination plant.' },
+          // Honduras
+          { coords: [-87.6217, 14.3833], power: 'US', baseName: 'Soto Cano Air Base (Palmerola)', hostCountry: 'Honduras', detail: '~1,300\u20131,500 US personnel | CH-47 Chinooks, UH-60 Black Hawks, C-130s | JTF-Bravo | Stores: medical supplies, humanitarian equipment; counter-narcotics ops.' },
+          // Ecuador
+          { coords: [-80.7333, -0.9500], power: 'US', baseName: 'Manta air base (US returned 2025)', hostCountry: 'Ecuador', detail: '~300\u2013500 US personnel (rotational) | P-3 Orion, P-8 Poseidon patrols | Counter narco-terrorism; ISR | Reestablished Dec 2025; 3,048m runway; Pacific coast.' },
+          // Puerto Rico (US territory)
+          { coords: [-65.6278, 18.2442], power: 'US', baseName: 'Roosevelt Roads / Ramey AFB (reactivated)', hostCountry: 'Puerto Rico (US)', detail: '~500\u20131,000 US personnel | C-130 capable; patrol aircraft staging | Stores: fuel, ordnance for Caribbean ops | Reactivated 2025; dual-site (Ceiba & Aguadilla).' },
+          // Curaçao / Aruba (Dutch Caribbean, US access)
+          { coords: [-68.9900, 12.1696], power: 'US', baseName: 'FOL Cura\u00e7ao (Hato)', hostCountry: 'Cura\u00e7ao (Netherlands)', detail: '~200 US + Dutch personnel | P-3C Orion, P-8 Poseidon patrol aircraft | Stores: sonobuoys, fuel, reconnaissance equipment | Counter-narcotics FOL; Caribbean approaches.' },
+          { coords: [-70.0167, 12.5092], power: 'US', baseName: 'FOL Aruba (Reina Beatrix)', hostCountry: 'Aruba (Netherlands)', detail: '~100 US + Dutch personnel | Patrol aircraft rotations | Stores: fuel, reconnaissance supplies | Counter-narcotics patrols; southern Caribbean.' },
+          // French Guiana
+          { coords: [-52.3264, 4.9371], power: 'France', baseName: 'Forces arm\u00e9es en Guyane (Kourou)', hostCountry: 'French Guiana', detail: '~2,100 French troops (incl. Foreign Legion) | Helicopters, patrol boats, armored vehicles | Stores: weapons, ammo, fuel; rocket launch security | Guards Guiana Space Centre; border patrols.' },
+          // Falkland Islands
+          { coords: [-59.0088, -51.7963], power: 'UK', baseName: 'British Forces South Atlantic Islands', hostCountry: 'Falkland Islands', detail: '~1,200 UK troops | 4 Typhoon FGR4 fighters, Rapier SAMs, patrol vessel | Stores: air-to-air missiles, ammunition, fuel | RAF Mount Pleasant (2,590m runway); 1,580 mines still present.' },
+          // Haiti (UN)
+          { coords: [-72.3388, 18.5944], power: 'UN', baseName: 'UN Gang Suppression Force (GSF)', hostCountry: 'Haiti', detail: '~5,550 UN troops (from 10+ nations) | Armored vehicles, helicopters, small arms | Stores: ammunition, medical supplies, rations | Approved Sept 2025; counter-gang operations; Port-au-Prince.' },
+          // ——— NORTH AMERICA & ARCTIC ———
+          // Greenland (Denmark territory, US base)
+          { coords: [-68.7031, 76.5312], power: 'US', baseName: 'Pituffik Space Base', hostCountry: 'Greenland (Denmark)', detail: '~800 US + Danish personnel | AN/FPS-132 BMEWS radar (upgraded) | Space surveillance sensors, satellite tracking | Stores: fuel, Arctic survival equipment; NORAD deploys F-35s 2026.' },
+          // Canada (NORAD joint)
+          { coords: [-75.6972, 45.4215], power: 'US', baseName: 'NORAD HQ (joint US\u2013Canada)', hostCountry: 'Canada', detail: '~1,500 US personnel (across multiple Canadian sites) | Joint space & missile warning sensors | North Warning System radar chain | Bi-national command; North Bay, Cold Lake, Goose Bay.' },
+          // Bermuda (UK territory)
+          { coords: [-64.7505, 32.3078], power: 'UK', baseName: 'British garrison (Bermuda)', hostCountry: 'Bermuda (UK)', detail: '~300 Royal Bermuda Regiment | Small arms, patrol boats | Stores: ammunition, emergency supplies | UK Atlantic outpost; supports hurricane response.' },
+          // ——— OCEANIA & PACIFIC ———
+          // Marshall Islands (US)
+          { coords: [167.7307, 8.7200], power: 'US', baseName: 'USAG Kwajalein Atoll', hostCountry: 'Marshall Islands', detail: '~2,800 US military + contractors | Ground-Based Interceptors (GBI), THAAD test launchers, radar arrays | Reagan BMD Test Site | Stores: ICBM target vehicles, tracking instruments; world\'s largest lagoon.' },
+          // Hawaii (US, major Pacific hub)
+          { coords: [-157.9497, 21.3469], power: 'US', baseName: 'Pearl Harbor\u2013Hickam (INDOPACOM HQ)', hostCountry: 'Hawaii (US)', detail: '~45,000 US military on Oahu | Pacific Fleet (~60 ships, 150 aircraft), F-22 Raptors, nuclear submarines | INDOPACOM HQ | Stores: massive naval munitions; Lualualei weapons depot; fuel reserves.' },
+          // New Caledonia (France)
+          { coords: [166.4572, -22.2735], power: 'France', baseName: 'FANC (Noum\u00e9a)', hostCountry: 'New Caledonia (France)', detail: '~1,500 French troops | RIMAP-NC (marine infantry), Falcon Guardian patrol aircraft, patrol vessels | Stores: ammunition, fuel, vehicles | Naval base; France\'s Pacific anchor; Indo-Pacific strategy.' },
+          // French Polynesia (France)
+          { coords: [-149.5695, -17.5516], power: 'France', baseName: 'FAPF (Papeete / Tahiti)', hostCountry: 'French Polynesia (France)', detail: '~1,000 French troops | Floreal-class frigates, Falcon 200 maritime patrol | Stores: naval ordnance, fuel | Covers 4.8M km\u00b2 EEZ; monitors former nuclear test sites (Moruroa).' },
+          // Guam (already listed above, skip duplicate)
+          // Japan (Okinawa — Pacific-facing)
+          // Diego Garcia already listed
+        ];
+
+        var conflicts = [
+          { coords: [34.4668, 31.5017], name: 'Gaza Strip', location: 'Palestine', detail: 'Israeli\u2013Hamas conflict; ongoing as of March 2026.' },
+          { coords: [35.4955, 33.0894], name: 'Lebanon\u2013Israel border', location: 'Lebanon / Israel', detail: 'Iran\u2013Israel war (Hezbollah, Iran-backed); cross-border strikes; March 2026.' },
+          { coords: [51.6674, 32.6546], name: 'Iran (Isfahan)', location: 'Iran', detail: 'Israeli strikes; nuclear/military sites; March 2026.' },
+          { coords: [51.3890, 35.6892], name: 'Iran (Tehran area)', location: 'Iran', detail: 'Israeli strikes; leadership, IRGC, military assets; March 2026.' },
+          { coords: [48.5164, 34.7989], name: 'Iran (southwest / military)', location: 'Iran', detail: 'Strikes on bases and infrastructure; March 2026.' },
+          { coords: [35.2022, 31.9031], name: 'West Bank', location: 'Palestine', detail: 'Occupation; clashes and raids; March 2026.' },
+          { coords: [44.2061, 15.3694], name: 'Yemen (Sana\'a)', location: 'Yemen', detail: 'Houthi conflict (Iran-backed); Red Sea attacks; ongoing March 2026.' },
+          { coords: [32.5599, 15.5007], name: 'Sudan (Khartoum)', location: 'Sudan', detail: 'SAF vs RSF; fighting ongoing March 2026.' },
+          { coords: [36.6342, 35.9312], name: 'Syria (Idlib)', location: 'Syria', detail: 'Ongoing conflict; Turkish-backed opposition vs government; March 2026.' },
+          { coords: [44.3661, 33.3152], name: 'Iraq (Baghdad area)', location: 'Iraq', detail: 'Iran-aligned militias; attacks on US forces; March 2026.' },
+          { coords: [45.3386, 2.0371], name: 'Somalia (Mogadishu)', location: 'Somalia', detail: 'Al-Shabaab insurgency; active March 2026.' },
+          // ——— AFRICA ———
+          // North Africa
+          { coords: [-12.3, 26.0], name: 'Western Sahara', location: 'Morocco / Western Sahara', detail: 'Morocco vs Polisario (Algeria-backed); low-intensity fighting along berm; March 2026.' },
+          { coords: [-8.15, 27.67], name: 'Algeria (Tindouf)', location: 'Algeria', detail: 'Polisario refugee camps; Algeria\u2013Morocco tension; Western Sahara conflict spillover; March 2026.' },
+          { coords: [13.1914, 32.8872], name: 'Libya (Tripoli / west)', location: 'Libya', detail: 'Rival governments; armed factions; March 2026.' },
+          { coords: [20.0681, 32.1194], name: 'Libya (east / Benghazi)', location: 'Libya', detail: 'LNA; Russian/Wagner presence; March 2026.' },
+          // Sudan
+          { coords: [30.0, 13.5], name: 'Sudan (Darfur)', location: 'Sudan', detail: 'RSF advances in Darfur; ethnic violence; mass displacement; March 2026.' },
+          { coords: [29.5, 11.7], name: 'Sudan (West Kordofan)', location: 'Sudan', detail: 'RSF gained territory; SAF counter-offensives; March 2026.' },
+          // Sahel
+          { coords: [-8.0, 12.6], name: 'Mali (Bamako / south)', location: 'Mali', detail: 'JNIM (al-Qaeda) and ISSP attacks; junta + Africa Corps vs jihadists; March 2026.' },
+          { coords: [-1.68, 17.05], name: 'Mali (north / Kidal)', location: 'Mali', detail: 'Tuareg rebellion; junta recaptured Kidal 2023; sporadic fighting; March 2026.' },
+          { coords: [-1.52, 12.37], name: 'Burkina Faso', location: 'Burkina Faso', detail: 'JNIM and ISSP insurgency; over 40% of territory contested; mass displacement; March 2026.' },
+          { coords: [2.11, 13.51], name: 'Niger (Niamey / west)', location: 'Niger', detail: 'ISSP attacked Niamey airport Jan 2026; jihadist expansion into urban areas; March 2026.' },
+          { coords: [13.0, 13.6], name: 'Nigeria (northeast / Borno)', location: 'Nigeria', detail: 'Boko Haram / ISWAP insurgency; Borno, Yobe states; March 2026.' },
+          { coords: [7.49, 9.06], name: 'Nigeria (Middle Belt)', location: 'Nigeria', detail: 'Farmer\u2013herder violence; banditry; kidnapping; March 2026.' },
+          { coords: [9.29, 4.95], name: 'Cameroon (Anglophone crisis)', location: 'Cameroon', detail: 'Separatist conflict in NW/SW regions; Ambazonia; since 2017; March 2026.' },
+          { coords: [14.42, 13.52], name: 'Chad (Lake Chad basin)', location: 'Chad', detail: 'Boko Haram/ISWAP cross-border raids; Lake Chad region; March 2026.' },
+          // Horn of Africa
+          { coords: [39.47, 13.5], name: 'Ethiopia (Tigray\u2013Amhara border)', location: 'Ethiopia', detail: 'TPLF/TDF operations to regain territory; clashes with Amhara forces; Jan\u2013Mar 2026.' },
+          { coords: [39.7, 9.0], name: 'Ethiopia (Oromia)', location: 'Ethiopia', detail: 'Oromo Liberation Army vs federal forces; ongoing; March 2026.' },
+          { coords: [37.0, 10.5], name: 'Ethiopia (Amhara / Fano)', location: 'Ethiopia', detail: 'Amhara Fano militia vs federal forces; drone strikes; mass detentions; March 2026.' },
+          { coords: [39.0, 15.34], name: 'Eritrea\u2013Ethiopia tension', location: 'Eritrea / Ethiopia', detail: 'Rising tensions over Red Sea access; border militarisation; March 2026.' },
+          // East Africa
+          { coords: [29.22, -1.68], name: 'DRC (North Kivu / Goma)', location: 'DR Congo', detail: 'M23 (Rwanda-backed) advance; seized territory near Goma; March 2026.' },
+          { coords: [29.15, -3.37], name: 'DRC (South Kivu / Uvira)', location: 'DR Congo', detail: 'M23 seized Uvira Jan 2026; continued fighting; March 2026.' },
+          { coords: [27.48, 2.14], name: 'DRC (Ituri)', location: 'DR Congo', detail: 'ADF (IS\u2013linked) attacks; militia violence; March 2026.' },
+          // Mozambique
+          { coords: [40.52, -12.97], name: 'Mozambique (Cabo Delgado)', location: 'Mozambique', detail: 'IS Mozambique insurgency; ~5,000 Rwandan troops deployed; 300K displaced since Jul 2025; March 2026.' },
+          { coords: [39.26, -14.53], name: 'Mozambique (Nampula)', location: 'Mozambique', detail: 'ISM expansion southward into Nampula province; 60K displaced; March 2026.' },
+          // Central Africa
+          { coords: [18.56, 4.39], name: 'Central African Republic', location: 'CAR', detail: 'Rebel groups vs government + Russia/Africa Corps; intermittent fighting; March 2026.' },
+          // ——— ASIA ———
+          // Myanmar civil war
+          { coords: [96.13, 19.76], name: 'Myanmar (Mandalay / central)', location: 'Myanmar', detail: 'Civil war; Tatmadaw vs PDFs and ethnic armies; military controls ~21% of territory; March 2026.' },
+          { coords: [97.04, 21.97], name: 'Myanmar (Shan State)', location: 'Myanmar', detail: 'Shan State fighting; multiple ethnic armies vs Tatmadaw; March 2026.' },
+          { coords: [97.96, 16.87], name: 'Myanmar (Karen State)', location: 'Myanmar', detail: 'Karen National Union vs Tatmadaw; border area with Thailand; March 2026.' },
+          { coords: [95.97, 22.1], name: 'Myanmar (Sagaing)', location: 'Myanmar', detail: 'Heavy fighting; PDFs vs Tatmadaw; Bamar heartland; March 2026.' },
+          { coords: [97.4, 25.37], name: 'Myanmar (Kachin)', location: 'Myanmar', detail: 'Kachin Independence Army vs Tatmadaw; northern Myanmar; March 2026.' },
+          // Afghanistan
+          { coords: [69.17, 34.53], name: 'Afghanistan (Kabul area)', location: 'Afghanistan', detail: 'Taliban rule; IS\u2013Khorasan attacks; instability; March 2026.' },
+          { coords: [65.71, 31.62], name: 'Afghanistan (south / Kandahar)', location: 'Afghanistan', detail: 'Taliban vs IS\u2013K; sporadic bombings; March 2026.' },
+          // Pakistan\u2013Afghanistan border
+          { coords: [70.33, 33.93], name: 'Pakistan\u2013Afghanistan border', location: 'Pakistan / Afghanistan', detail: 'Cross-border clashes; Pakistan airstrikes into Afghanistan; TTP attacks; March 2026.' },
+          // Kashmir
+          { coords: [74.79, 34.08], name: 'Kashmir (India\u2013Pakistan)', location: 'India / Pakistan', detail: 'Line of Control; sporadic ceasefire violations and militant attacks; March 2026.' },
+          // South China Sea
+          { coords: [116.07, 9.75], name: 'South China Sea (Scarborough Shoal)', location: 'Philippines / China', detail: 'China\u2013Philippines maritime confrontations; grey-zone operations; March 2026.' },
+          { coords: [115.82, 9.90], name: 'South China Sea (Second Thomas Shoal)', location: 'Philippines / China', detail: 'Philippine garrison; Chinese blockade attempts; water cannon incidents; March 2026.' },
+          // Indonesia (Papua)
+          { coords: [138.75, -4.00], name: 'Indonesia (Papua)', location: 'Indonesia', detail: 'West Papua independence insurgency; OPM vs Indonesian military; March 2026.' },
+          // Philippines (internal)
+          { coords: [121.99, 6.95], name: 'Philippines (Mindanao / Sulu)', location: 'Philippines', detail: 'Abu Sayyaf and IS\u2013affiliated militants; Bangsamoro transition; March 2026.' },
+          // ——— EUROPE ———
+          // Ukraine\u2013Russia war
+          { coords: [37.80, 48.02], name: 'Ukraine (Donetsk front)', location: 'Ukraine', detail: 'Heaviest fighting; Russian advances; Pokrovsk, Avdiivka axis; March 2026.' },
+          { coords: [38.10, 49.43], name: 'Ukraine (Kharkiv / Kupyansk)', location: 'Ukraine', detail: 'Ukrainian counter-attacks; stabilized Kupyansk; March 2026.' },
+          { coords: [35.04, 47.84], name: 'Ukraine (Zaporizhzhia front)', location: 'Ukraine', detail: 'Positional warfare; Russian fortifications; March 2026.' },
+          { coords: [33.37, 46.63], name: 'Ukraine (Kherson / south)', location: 'Ukraine', detail: 'Cross-river operations; Russian shelling of Kherson city; March 2026.' },
+          { coords: [30.52, 50.45], name: 'Ukraine (Kyiv \u2014 air war)', location: 'Ukraine', detail: 'Russian drone and missile strikes on Kyiv; 77,000+ drones fired since 2022; March 2026.' },
+          // Frozen / tense
+          { coords: [29.76, 46.84], name: 'Moldova (Transnistria)', location: 'Moldova', detail: 'Frozen conflict; ~1,500 Russian troops; tensions over gas and Cobasna depot; March 2026.' },
+          { coords: [44.75, 42.25], name: 'Georgia (South Ossetia)', location: 'Georgia', detail: 'Russian-occupied since 2008; creeping border; tensions; March 2026.' },
+          { coords: [41.04, 42.97], name: 'Georgia (Abkhazia)', location: 'Georgia', detail: 'Russian-occupied breakaway region; ~4,500 Russian troops; March 2026.' },
+          // ——— SOUTH & CENTRAL AMERICA / CARIBBEAN ———
+          // Colombia
+          { coords: [-72.51, 8.25], name: 'Colombia (Catatumbo / Venezuela border)', location: 'Colombia', detail: 'ELN vs FARC dissidents; 80+ killed, 50K+ displaced; heaviest fighting; March 2026.' },
+          { coords: [-76.53, 7.88], name: 'Colombia (Choc\u00f3 / NW)', location: 'Colombia', detail: 'ELN vs Gulf Clan; armed curfews; 3,500+ displaced; March 2026.' },
+          { coords: [-70.71, 7.07], name: 'Colombia (Arauca)', location: 'Colombia', detail: 'ELN\u2013dissident FARC fighting; border region; March 2026.' },
+          // Haiti
+          { coords: [-72.34, 18.54], name: 'Haiti (Port-au-Prince)', location: 'Haiti', detail: 'Gang control; 8,100+ killed; 1.3M displaced; UN GSF deployed; March 2026.' },
+          // Ecuador
+          { coords: [-79.90, -2.19], name: 'Ecuador (Guayaquil / coast)', location: 'Ecuador', detail: 'Narco-gang violence; state of emergency; military operations; March 2026.' },
+          // Mexico
+          { coords: [-103.35, 20.66], name: 'Mexico (Sinaloa / Jalisco)', location: 'Mexico', detail: 'Cartel violence; Sinaloa Cartel vs CJNG; thousands killed annually; March 2026.' },
+          { coords: [-106.07, 28.63], name: 'Mexico (Chihuahua / north)', location: 'Mexico', detail: 'Cartel violence; cross-border trafficking; March 2026.' },
+          // ——— OCEANIA & PACIFIC ———
+          { coords: [155.39, -6.23], name: 'Papua New Guinea (Bougainville)', location: 'Papua New Guinea', detail: 'Bougainville independence tension; 2019 referendum for independence; talks ongoing; potential flashpoint; March 2026.' },
+          { coords: [159.97, -9.43], name: 'Solomon Islands (Honiara)', location: 'Solomon Islands', detail: 'Political instability; China security pact; ethnic tensions; Guadalcanal; March 2026.' },
+          { coords: [166.46, -22.27], name: 'New Caledonia', location: 'New Caledonia (France)', detail: 'Pro-independence unrest; riots May 2024; Kanak tensions with France; March 2026.' }
+        ];
+
+        document.getElementById('base-count').textContent = bases.length;
+        document.getElementById('conflict-count').textContent = conflicts.length;
+        document.getElementById('stat-bases').textContent = bases.length;
+        document.getElementById('stat-conflicts').textContent = conflicts.length;
+        var hostSet = {};
+        bases.forEach(function (b) { hostSet[b.hostCountry] = true; });
+        document.getElementById('stat-countries').textContent = Object.keys(hostSet).length;
+
+        var gunfireSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="2" fill="#ef4444"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>';
+
+        var powerToFlag = { US: 'us', UK: 'gb', France: 'fr', Russia: 'ru', China: 'cn', Japan: 'jp', Italy: 'it', Turkey: 'tr', UAE: 'ae', Rwanda: 'rw', Egypt: 'eg', India: 'in', UN: 'un' };
+        var militaryLayer = L.markerClusterGroup({
+          maxClusterRadius: 45,
+          spiderfyOnMaxZoom: true,
+          showCoverageOnHover: false,
+          zoomToBoundsOnClick: true
+        });
+
+        bases.forEach(function (b) {
+          var latlng = L.latLng(b.coords[1], b.coords[0]);
+          var code = powerToFlag[b.power] || 'un';
+          var isUn = code === 'un';
+          var iconHtml = isUn
+            ? '<div class="flag-icon-wrap un-flag"></div>'
+            : '<div class="flag-icon-wrap"><img src="https://flagcdn.com/w80/' + code + '.png" alt="' + b.power + '"></div>';
+          var marker = L.marker(latlng, {
+            icon: L.divIcon({ html: iconHtml, className: 'flag-marker', iconSize: [30, 22], iconAnchor: [15, 11] })
+          });
+          var detailHtml = (b.detail || '').split(' | ').map(function(line) {
+            if (line.startsWith('Stores:')) return '<span style="color:#fbbf24">' + line + '</span>';
+            if (/^\~?\d/.test(line)) return '<span style="color:#38bdf8">' + line + '</span>';
+            return line;
+          }).join('<br>');
+          marker.bindPopup(
+            '<div class="popup-header"><span class="popup-dot base-dot"></span><div class="popup-title">' + b.baseName + '</div></div>' +
+            '<div class="popup-divider"></div>' +
+            '<div class="popup-meta"><strong>' + b.power + '</strong> \u2014 ' + b.hostCountry + '</div>' +
+            '<div class="popup-divider"></div>' +
+            '<div class="popup-meta" style="margin-top:4px;line-height:1.7">' + detailHtml + '</div>' +
+            '<span class="popup-tag base-tag">Military base</span>',
+            { maxWidth: 340, className: 'custom-popup' }
+          );
+          militaryLayer.addLayer(marker);
+        });
+        militaryLayer.addTo(map);
+
+        var conflictLayer = L.featureGroup();
+        conflicts.forEach(function (c) {
+          var latlng = L.latLng(c.coords[1], c.coords[0]);
+          var marker = L.marker(latlng, {
+            icon: L.divIcon({ html: '<div class="gunfire-icon">' + gunfireSvg + '</div>', className: 'conflict-marker', iconSize: [28, 28], iconAnchor: [14, 14] })
+          });
+          marker.bindPopup(
+            '<div class="popup-header"><span class="popup-dot conflict-dot"></span><div class="popup-title">' + c.name + '</div></div>' +
+            '<div class="popup-divider"></div>' +
+            '<div class="popup-meta"><strong>' + c.location + '</strong></div>' +
+            '<div class="popup-meta" style="margin-top:4px">' + (c.detail || '') + '</div>' +
+            '<span class="popup-tag conflict-tag">Active conflict</span>',
+            { maxWidth: 280, className: 'custom-popup' }
+          );
+          conflictLayer.addLayer(marker);
+        });
+        // conflict layer hidden by default; user clicks to enable
+
+        document.getElementById('toggle-military').onclick = function () {
+          this.classList.toggle('active');
+          if (map.hasLayer(militaryLayer)) map.removeLayer(militaryLayer);
+          else map.addLayer(militaryLayer);
+        };
+        document.getElementById('toggle-conflict').onclick = function () {
+          this.classList.toggle('active');
+          if (map.hasLayer(conflictLayer)) map.removeLayer(conflictLayer);
+          else map.addLayer(conflictLayer);
+        };
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMap);
+      } else {
+        initMap();
+      }
+    })();
+  </script>
+</body>
+</html>
