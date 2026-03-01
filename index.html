@@ -80,6 +80,60 @@
       border-color: rgba(239, 68, 68, 0.6);
       box-shadow: 0 4px 20px rgba(239, 68, 68, 0.25);
     }
+    .layer-btn.nuke {
+      background: rgba(245, 158, 11, 0.15); color: #fcd34d;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .layer-btn.nuke.active {
+      background: rgba(245, 158, 11, 0.4); color: #fff;
+      border-color: rgba(245, 158, 11, 0.6);
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.25);
+    }
+    .layer-btn.missile {
+      background: rgba(6, 182, 212, 0.15); color: #67e8f9;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+    .layer-btn.missile.active {
+      background: rgba(6, 182, 212, 0.4); color: #fff;
+      border-color: rgba(6, 182, 212, 0.6);
+      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.25);
+    }
+    .layer-btn.drone {
+      background: rgba(168, 85, 247, 0.15); color: #d8b4fe;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    .layer-btn.drone.active {
+      background: rgba(168, 85, 247, 0.4); color: #fff;
+      border-color: rgba(168, 85, 247, 0.6);
+      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.25);
+    }
+    .layer-btn.cyber {
+      background: rgba(34, 197, 94, 0.15); color: #86efac;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    .layer-btn.cyber.active {
+      background: rgba(34, 197, 94, 0.4); color: #fff;
+      border-color: rgba(34, 197, 94, 0.6);
+      box-shadow: 0 4px 20px rgba(34, 197, 94, 0.25);
+    }
+    .layer-btn.naval {
+      background: rgba(99, 102, 241, 0.15); color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+    .layer-btn.naval.active {
+      background: rgba(99, 102, 241, 0.4); color: #fff;
+      border-color: rgba(99, 102, 241, 0.6);
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.25);
+    }
+    .layer-btn.alliance {
+      background: rgba(148, 163, 184, 0.15); color: #cbd5e1;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+    .layer-btn.alliance.active {
+      background: rgba(148, 163, 184, 0.4); color: #fff;
+      border-color: rgba(148, 163, 184, 0.6);
+      box-shadow: 0 4px 20px rgba(148, 163, 184, 0.25);
+    }
     .layer-btn:hover { transform: translateY(-1px); filter: brightness(1.15); }
     .layer-btn:active { transform: translateY(0); }
 
@@ -125,6 +179,16 @@
     }
     .popup-tag.base-tag { background: rgba(59,130,246,0.2); color: #93c5fd; }
     .popup-tag.conflict-tag { background: rgba(239,68,68,0.2); color: #fca5a5; }
+    .popup-tag.nuke-tag { background: rgba(245,158,11,0.2); color: #fcd34d; }
+    .popup-tag.missile-tag { background: rgba(6,182,212,0.2); color: #67e8f9; }
+    .popup-tag.drone-tag { background: rgba(168,85,247,0.2); color: #d8b4fe; }
+    .popup-tag.cyber-tag { background: rgba(34,197,94,0.2); color: #86efac; }
+    .popup-tag.naval-tag { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+    .popup-header .popup-dot.nuke-dot { background: #f59e0b; box-shadow: 0 0 8px rgba(245,158,11,0.5); }
+    .popup-header .popup-dot.missile-dot { background: #06b6d4; box-shadow: 0 0 8px rgba(6,182,212,0.5); }
+    .popup-header .popup-dot.drone-dot { background: #a855f7; box-shadow: 0 0 8px rgba(168,85,247,0.5); }
+    .popup-header .popup-dot.cyber-dot { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.5); }
+    .popup-header .popup-dot.naval-dot { background: #6366f1; box-shadow: 0 0 8px rgba(99,102,241,0.5); }
 
     /* Flag markers */
     .flag-icon-wrap {
@@ -140,6 +204,33 @@
     }
     .leaflet-div-icon.flag-marker { background: none !important; border: none !important; }
     .leaflet-div-icon.conflict-marker { background: none !important; border: none !important; }
+    .leaflet-div-icon.nuke-marker, .leaflet-div-icon.missile-marker,
+    .leaflet-div-icon.drone-marker, .leaflet-div-icon.cyber-marker,
+    .leaflet-div-icon.naval-marker { background: none !important; border: none !important; }
+    .layer-icon {
+      width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; position: relative;
+    }
+    .layer-icon.nuke-icon { background: rgba(245,158,11,0.25); box-shadow: 0 0 10px rgba(245,158,11,0.4); }
+    .layer-icon.missile-icon { background: rgba(6,182,212,0.25); box-shadow: 0 0 10px rgba(6,182,212,0.4); }
+    .layer-icon.drone-icon { background: rgba(168,85,247,0.25); box-shadow: 0 0 10px rgba(168,85,247,0.4); }
+    .layer-icon.cyber-icon { background: rgba(34,197,94,0.25); box-shadow: 0 0 10px rgba(34,197,94,0.4); }
+    .layer-icon.naval-icon { background: rgba(99,102,241,0.25); box-shadow: 0 0 10px rgba(99,102,241,0.4); }
+    .alliance-ring {
+      position: absolute; inset: -4px; border-radius: 50%; border: 2.5px solid transparent;
+      pointer-events: none; animation: ring-pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes ring-pulse { 0%,100% { opacity: 0.8; } 50% { opacity: 0.4; } }
+    .alliance-legend {
+      position: absolute; bottom: 60px; left: 20px; z-index: 1000;
+      background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(30,41,59,0.9));
+      border: 1px solid rgba(148,163,184,0.15); border-radius: 12px; padding: 12px 16px;
+      backdrop-filter: blur(16px); display: none; font-size: 11px; color: #94a3b8;
+    }
+    .alliance-legend.visible { display: block; }
+    .alliance-legend h3 { font-size: 12px; color: #f1f5f9; margin-bottom: 8px; font-weight: 700; }
+    .alliance-row { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+    .alliance-swatch { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
 
     /* Conflict icon: pulsing glow */
     .gunfire-icon {
@@ -178,25 +269,23 @@
     /* Mobile responsive */
     @media (max-width: 600px) {
       .title-bar {
-        top: 10px; left: 10px; right: 10px;
-        padding: 10px 14px; border-radius: 12px;
+        top: 10px; left: 10px; right: auto;
+        padding: 10px 14px; border-radius: 12px; max-width: 200px;
       }
-      .title-bar h1 { font-size: 14px; }
+      .title-bar h1 { font-size: 13px; }
       .title-bar .subtitle { font-size: 10px; margin-top: 4px; }
       .layer-toggles {
-        top: auto; bottom: 70px; right: 10px; left: auto;
-        flex-direction: row; gap: 5px;
+        top: 10px; right: 10px; left: auto; bottom: auto;
+        flex-direction: column; gap: 4px; max-height: 60vh; overflow-y: auto;
       }
       .layer-btn {
-        padding: 8px 10px; font-size: 11px; border-radius: 10px;
-        gap: 5px;
+        padding: 6px 10px; font-size: 10px; border-radius: 10px; gap: 5px;
       }
-      .layer-btn .btn-icon { font-size: 12px; }
-      .layer-btn .btn-count { font-size: 9px; padding: 1px 5px; }
-      .stats-bar {
-        bottom: 110px; right: 10px;
-      }
-      .stat-pill { font-size: 10px; padding: 4px 9px; }
+      .layer-btn .btn-icon { font-size: 11px; }
+      .layer-btn .btn-count { font-size: 8px; padding: 1px 5px; }
+      .layer-btn .btn-label { display: none; }
+      .stats-bar { display: none; }
+      .alliance-legend { bottom: 50px; left: 10px; padding: 8px 12px; }
       .leaflet-control-zoom a {
         width: 32px !important; height: 32px !important;
         line-height: 32px !important; font-size: 14px !important;
@@ -208,7 +297,7 @@
     }
     @media (max-width: 380px) {
       .title-bar h1 { font-size: 12px; }
-      .layer-btn { padding: 6px 8px; font-size: 10px; }
+      .layer-btn { padding: 5px 7px; font-size: 9px; }
       .layer-btn .btn-count { display: none; }
     }
   </style>
@@ -226,12 +315,35 @@
 
   <div class="layer-toggles">
     <button class="layer-btn military active" id="toggle-military">
-      <span class="btn-icon">&#127987;&#65039;</span> Military bases
+      <span class="btn-icon">&#127987;&#65039;</span><span class="btn-label"> Bases</span>
       <span class="btn-count" id="base-count">0</span>
     </button>
     <button class="layer-btn conflict" id="toggle-conflict">
-      <span class="btn-icon">&#128165;</span> War & fighting
+      <span class="btn-icon">&#128165;</span><span class="btn-label"> Conflicts</span>
       <span class="btn-count" id="conflict-count">0</span>
+    </button>
+    <button class="layer-btn nuke" id="toggle-nuke">
+      <span class="btn-icon">&#9762;&#65039;</span><span class="btn-label"> Nuclear</span>
+      <span class="btn-count" id="nuke-count">0</span>
+    </button>
+    <button class="layer-btn missile" id="toggle-missile">
+      <span class="btn-icon">&#128737;</span><span class="btn-label"> Missile Def</span>
+      <span class="btn-count" id="missile-count">0</span>
+    </button>
+    <button class="layer-btn drone" id="toggle-drone">
+      <span class="btn-icon">&#9992;&#65039;</span><span class="btn-label"> Drones</span>
+      <span class="btn-count" id="drone-count">0</span>
+    </button>
+    <button class="layer-btn cyber" id="toggle-cyber">
+      <span class="btn-icon">&#128187;</span><span class="btn-label"> Cyber/Intel</span>
+      <span class="btn-count" id="cyber-count">0</span>
+    </button>
+    <button class="layer-btn naval" id="toggle-naval">
+      <span class="btn-icon">&#9875;</span><span class="btn-label"> Chokepoints</span>
+      <span class="btn-count" id="naval-count">0</span>
+    </button>
+    <button class="layer-btn alliance" id="toggle-alliance">
+      <span class="btn-icon">&#127760;</span><span class="btn-label"> Alliances</span>
     </button>
   </div>
 
@@ -240,6 +352,16 @@
     <div class="stat-pill conflict-stat"><span id="stat-conflicts">0</span> active conflict zones</div>
   </div>
 
+  <div class="alliance-legend" id="alliance-legend">
+    <h3>Military Alliances</h3>
+    <div class="alliance-row"><span class="alliance-swatch" style="background:#3b82f6"></span> NATO</div>
+    <div class="alliance-row"><span class="alliance-swatch" style="background:#ef4444"></span> CSTO</div>
+    <div class="alliance-row"><span class="alliance-swatch" style="background:#06b6d4"></span> AUKUS</div>
+    <div class="alliance-row"><span class="alliance-swatch" style="background:#22c55e"></span> Five Eyes</div>
+    <div class="alliance-row"><span class="alliance-swatch" style="background:#f97316"></span> Quad</div>
+    <div class="alliance-row"><span class="alliance-swatch" style="background:#eab308"></span> SCO</div>
+    <div class="alliance-row"><span class="alliance-swatch" style="background:#64748b"></span> Non-aligned</div>
+  </div>
   <div class="attr">&copy; OpenStreetMap, CARTO</div>
 
   <script>
@@ -378,6 +500,12 @@
           { coords: [114.0834, 10.3854], power: 'China', baseName: 'Subi Reef', hostCountry: 'South China Sea (disputed)', detail: '~200+ PLA personnel | 3,160m runway; point-defense weapons, radar | Hangars for 24 fighters, helipads | Stores: munitions, fuel; area 3.95 km\u00b2; Spratlys.' },
           { coords: [113.8328, 9.5474], power: 'China', baseName: 'Mischief Reef', hostCountry: 'South China Sea (disputed)', detail: '~200+ PLA personnel | 2,700m runway; anti-aircraft guns, CIWS, radar | Hangars, communications domes | Stores: munitions, fuel; area 5.52 km\u00b2; within Philippines EEZ.' },
           // Afghanistan
+          // Japan (additional)
+          { coords: [127.7563, 26.3432], power: 'US', baseName: 'Camp Foster / Camp Kinser', hostCountry: 'Japan (Okinawa)', detail: '~9,000 US Marines | III Marine Expeditionary Force HQ | Stores: vehicles, ammo, fuel | Okinawa; Marine logistics hub.' },
+          { coords: [127.7730, 26.5397], power: 'US', baseName: 'Camp Hansen', hostCountry: 'Japan (Okinawa)', detail: '~6,000 US Marines | Infantry units, live-fire training areas | Stores: small arms, ammunition | Northern Okinawa training base.' },
+          // French overseas (additional)
+          { coords: [55.4700, -21.1100], power: 'France', baseName: 'FAZSOI (R\u00e9union)', hostCountry: 'R\u00e9union (France)', detail: '~1,700 French troops | 2 Floreal-class frigates, Panther helicopters | Stores: naval ordnance, fuel | Controls 2.8M km\u00b2 EEZ; Indian Ocean patrol.' },
+          { coords: [45.2272, -12.7871], power: 'France', baseName: 'DLEM Mayotte', hostCountry: 'Mayotte (France)', detail: '~300 Foreign Legion troops | Patrol boats, light vehicles | Stores: arms, ammunition | Mozambique Channel; counter-migration & piracy.' },
           // ——— EUROPE ———
           // Germany (US)
           { coords: [7.6003, 49.4369], power: 'US', baseName: 'Ramstein Air Base', hostCountry: 'Germany', detail: '~9,000 US personnel + 5,000 dependents | C-130J, C-17, C-5M transports; KC-135 tankers | NATO Allied Air Command HQ | Stores: massive munitions depot; hospital (LRMC); largest US air base in Europe.' },
@@ -551,13 +679,137 @@
           // ——— OCEANIA & PACIFIC ———
           { coords: [155.39, -6.23], name: 'Papua New Guinea (Bougainville)', location: 'Papua New Guinea', detail: 'Bougainville independence tension; 2019 referendum for independence; talks ongoing; potential flashpoint; March 2026.' },
           { coords: [159.97, -9.43], name: 'Solomon Islands (Honiara)', location: 'Solomon Islands', detail: 'Political instability; China security pact; ethnic tensions; Guadalcanal; March 2026.' },
-          { coords: [166.46, -22.27], name: 'New Caledonia', location: 'New Caledonia (France)', detail: 'Pro-independence unrest; riots May 2024; Kanak tensions with France; March 2026.' }
+          { coords: [166.46, -22.27], name: 'New Caledonia', location: 'New Caledonia (France)', detail: 'Pro-independence unrest; riots May 2024; Kanak tensions with France; March 2026.' },
+          // Additional conflict zones
+          { coords: [96.0, 20.78], name: 'Myanmar (Rakhine State)', location: 'Myanmar', detail: 'Arakan Army controls most of Rakhine; Rohingya crisis ongoing; March 2026.' },
+          { coords: [67.0, 30.12], name: 'Pakistan (Balochistan)', location: 'Pakistan', detail: 'BLA insurgency; attacks on Chinese workers (CPEC); Gwadar area; March 2026.' },
+          { coords: [93.94, 24.82], name: 'India (Manipur)', location: 'India', detail: 'Meitei\u2013Kuki ethnic conflict; 200+ killed since May 2023; ongoing; March 2026.' },
+          { coords: [14.0, 13.0], name: 'Lake Chad Basin (multi-country)', location: 'Nigeria / Chad / Niger / Cameroon', detail: 'Boko Haram/ISWAP cross-border insurgency; MNJTF operations; March 2026.' },
+          { coords: [46.20, 7.35], name: 'Somalia (central / Galmudug)', location: 'Somalia', detail: 'Al-Shabaab territory; Somali army + AU offensive; March 2026.' },
+          { coords: [34.75, 0.5], name: 'Uganda (ADF/Kamuina Nsapu)', location: 'Uganda / DRC border', detail: 'ADF (IS-linked) cross-border attacks; UPDF operations in DRC; March 2026.' }
+        ];
+
+        // ——— NUCLEAR WEAPONS SITES ———
+        var nuclearSites = [
+          // United States
+          { coords: [-106.475, 35.842], name: 'Kirtland AFB Underground Weapons Storage', country: 'US', detail: '~2,000+ warheads in storage | Largest US nuclear weapons stockpile | Stores: W76, W80, W88, B-61 warheads | Sandia National Lab adjacent; inspection & maintenance.' },
+          { coords: [-104.861, 38.748], name: 'Cheyenne Mountain / Peterson SFB', country: 'US', detail: 'NORAD/NORTHCOM HQ | Nuclear command & control bunker (granite mountain) | Blast doors rated for 30-megaton strike | Early warning for ICBM launches.' },
+          { coords: [-119.177, 47.597], name: 'Bangor (Naval Base Kitsap)', country: 'US', detail: '8 Ohio-class SSBNs home-ported | ~1,000 W76-2 & W88 warheads | Trident II D5 SLBMs | Largest deployed US nuclear arsenal.' },
+          { coords: [-81.078, 33.342], name: 'Kings Bay Naval Submarine Base', country: 'US', detail: '6 Ohio-class SSBNs home-ported | ~800 W76 & W88 warheads on Trident II | Stores: SLBM missiles, warheads | East Coast nuclear deterrent.' },
+          { coords: [-97.211, 48.414], name: 'Minot AFB', country: 'US', detail: '~150 Minuteman III ICBMs (91st MW) | B-52H bombers (5th Bomb Wing) with AGM-86B ALCMs | Stores: W78, W87 warheads | Northern Great Plains silo fields.' },
+          { coords: [-104.759, 41.150], name: 'F.E. Warren AFB', country: 'US', detail: '~150 Minuteman III ICBMs (90th MW) | First to receive LGM-35A Sentinel (2029+) | Stores: W78, W87-1 warheads | Wyoming/Nebraska/Colorado silo fields.' },
+          { coords: [-111.966, 47.508], name: 'Malmstrom AFB', country: 'US', detail: '~150 Minuteman III ICBMs (341st MW) | 3 missile squadrons across Montana | Stores: W78 warheads | Central Montana silo fields.' },
+          { coords: [-93.557, 32.501], name: 'Barksdale AFB', country: 'US', detail: 'B-52H Stratofortress bombers (2nd BW) | AFGSC HQ (Air Force Global Strike Command) | Stores: nuclear-armed ALCMs, B-61 gravity bombs | Louisiana.' },
+          { coords: [-87.613, 34.654], name: 'Whiteman AFB', country: 'US', detail: '20 B-2 Spirit stealth bombers (509th BW) | Only B-2 operational base | Stores: B-61 mod 12 guided bombs, B83 | Missouri.' },
+          // Russia
+          { coords: [40.567, 56.295], name: 'Sarov (Arzamas-16)', country: 'Russia', detail: 'Russian Federal Nuclear Center (VNIIEF) | Warhead design & assembly | Stores: classified warhead inventory | Equivalent to US Los Alamos; closed city.' },
+          { coords: [60.733, 56.840], name: 'Sverdlovsk-44/45 (Novouralsk)', country: 'Russia', detail: 'Uranium enrichment complex | Produces HEU for warheads | Stores: enriched uranium stockpile | Major nuclear material production site.' },
+          { coords: [37.617, 61.533], name: 'Gadzhiyevo (Northern Fleet SSBN base)', country: 'Russia', detail: '~6\u20138 Delta IV & Borei-class SSBNs | RSM-56 Bulava & R-29RMU2 SLBMs | Stores: ~600 SLBM warheads | Kola Peninsula; primary sea-based deterrent.' },
+          { coords: [134.657, 42.817], name: 'Rybachiy (Pacific Fleet SSBN base)', country: 'Russia', detail: '3\u20134 Borei-class SSBNs | Bulava SLBMs (6 warheads each) | Stores: ~200 SLBM warheads | Kamchatka Peninsula; Pacific deterrent.' },
+          { coords: [35.892, 52.943], name: 'Kozelsk (ICBM base)', country: 'Russia', detail: '~46 RS-28 Sarmat ICBMs (deploying) | Replaces SS-19 Stiletto | Stores: up to 460 warheads (10 MIRV each) | Heavy ICBM division.' },
+          { coords: [73.305, 55.437], name: 'Novosibirsk area (mobile ICBMs)', country: 'Russia', detail: 'RS-24 Yars mobile ICBM division | ~30\u201340 TEL launchers | Stores: ~120\u2013160 warheads | Road-mobile survivability.' },
+          // China
+          { coords: [103.858, 40.496], name: 'Jilantai (ICBM training)', country: 'China', detail: 'PLA Rocket Force training & storage | ~60+ ICBM silos under construction (Yumen) | DF-41 ICBMs (10 MIRV) | Stores: expanding to 300+ warheads; Inner Mongolia.' },
+          { coords: [97.73, 40.18], name: 'Yumen silo field', country: 'China', detail: '~120 ICBM silos detected (2021\u2013) | DF-41 capable silos | Stores: potentially 360+ warheads | Largest silo construction in history; Gansu Province.' },
+          { coords: [109.71, 18.23], name: 'Yulin Naval Base (SSBN)', country: 'China', detail: '~6 Type 094 Jin-class SSBNs | JL-2 / JL-3 SLBMs | Stores: ~72\u201396 SLBM warheads | Underground submarine pens; Hainan Island.' },
+          // United Kingdom
+          { coords: [-4.872, 56.056], name: 'HMNB Clyde (Faslane)', country: 'UK', detail: '4 Vanguard-class SSBNs | Trident II D5 SLBMs, ~40 warheads per boat deployed | Stores: ~225 total warheads | UK\'s sole nuclear deterrent base; Scotland.' },
+          { coords: [-1.302, 51.076], name: 'AWE Aldermaston', country: 'UK', detail: 'Atomic Weapons Establishment | Warhead design, manufacture & maintenance | Stores: nuclear warhead components | Berkshire; UK\'s nuclear weapons factory.' },
+          // France
+          { coords: [-4.628, 48.278], name: '\u00cele Longue (SSBN base)', country: 'France', detail: '4 Triomphant-class SSBNs | M51 SLBMs (6\u201310 warheads each) | Stores: ~200 SLBM warheads | Brest; France\'s sea-based deterrent.' },
+          { coords: [5.106, 43.831], name: 'Istres Air Base (nuclear bombers)', country: 'France', detail: 'Rafale B & Mirage 2000N bombers | ASMP-A nuclear cruise missiles (~300 kt) | Stores: ~50 air-delivered warheads | Force de frappe airborne leg.' },
+          // India
+          { coords: [83.224, 17.700], name: 'Visakhapatnam (SSBN base)', country: 'India', detail: '2 Arihant-class SSBNs | K-15 Sagarika / K-4 SLBMs | Stores: ~16 SLBM warheads | India\'s sea-based nuclear triad; Bay of Bengal.' },
+          // Pakistan
+          { coords: [72.668, 33.891], name: 'Kahuta / Wah (production)', country: 'Pakistan', detail: 'Khan Research Labs (HEU) + Pakistan Ordnance Factories | Warhead assembly & storage | Stores: estimated 170 warheads | Near Islamabad; heavily guarded.' },
+          // Israel
+          { coords: [35.147, 31.000], name: 'Dimona (Negev Nuclear Research Center)', country: 'Israel', detail: 'Plutonium production reactor (40\u2013150 MWt) | Warhead assembly (undeclared) | Stores: estimated 90 warheads | Israel\'s nuclear weapons program; officially ambiguous.' },
+          // North Korea
+          { coords: [125.753, 39.048], name: 'Yongbyon Nuclear Complex', country: 'North Korea', detail: '5 MWe reactor, reprocessing plant, enrichment | Plutonium & HEU for warheads | Stores: estimated 50\u201360 warheads | North Korea\'s primary nuclear weapons site.' },
+          { coords: [127.100, 39.666], name: 'Hwasong ICBM launch area', country: 'North Korea', detail: 'Hwasong-17/18 ICBM launch sites | Mobile TEL launchers (solid & liquid fuel) | Stores: nuclear-tipped ICBMs (est. 6\u201310) | Can reach continental US; Pyongyang area.' }
+        ];
+
+        // ——— MISSILE DEFENSE SYSTEMS ———
+        var missileSites = [
+          { coords: [-149.19, 64.29], name: 'Fort Greely GBI', country: 'US (Alaska)', detail: '40 Ground-Based Interceptors (GBI) | EKV kill vehicles | Stores: GBI missiles in underground silos | Primary US homeland missile defense vs ICBMs.' },
+          { coords: [-120.57, 34.74], name: 'Vandenberg SFB GBI', country: 'US (California)', detail: '4 Ground-Based Interceptors | Test launch site for GMD system | AN/TPY-2 radar | West Coast homeland defense.' },
+          { coords: [127.0148, 36.963], name: 'THAAD (South Korea)', country: 'South Korea', detail: 'THAAD battery at Seongju | 48 interceptor missiles | AN/TPY-2 X-band radar (1,000 km range) | Defends Seoul & US bases vs North Korean MRBMs.' },
+          { coords: [144.79, 13.44], name: 'THAAD (Guam)', country: 'US (Guam)', detail: 'THAAD battery + Aegis Ashore (building) | AN/TPY-2 radar | Defends Andersen AFB & Naval Base | Counter-China/DPRK ballistic missile threat.' },
+          { coords: [54.548, 24.248], name: 'THAAD (UAE)', country: 'UAE', detail: 'THAAD battery at Al Dhafra | Patriot PAC-3 batteries (multiple) | Defends Abu Dhabi & critical infrastructure | Counter-Houthi & Iranian ballistic missiles.' },
+          { coords: [47.575, 24.058], name: 'Patriot & THAAD (Saudi Arabia)', country: 'Saudi Arabia', detail: '~80 Patriot launchers across kingdom + THAAD | PAC-3 MSE interceptors | Defends Riyadh, oil facilities, bases | Heavy use vs Houthi ballistic missiles & drones.' },
+          { coords: [34.87, 31.25], name: 'Iron Dome / Arrow / David\'s Sling (Israel)', country: 'Israel', detail: '~10 Iron Dome batteries (Tamir interceptors) | Arrow-2/Arrow-3 (exo-atmospheric) | David\'s Sling (Stunner) | Multi-layered BMD; 90%+ intercept rate.' },
+          { coords: [21.896, 50.077], name: 'Aegis Ashore (Redzikowo, Poland)', country: 'Poland', detail: 'SM-3 Block IIA interceptors | AN/SPY-1 radar | Defends Europe vs Iranian/MRBM threats | Operational Dec 2024; NATO BMD.' },
+          { coords: [24.233, 43.928], name: 'Aegis Ashore (Deveselu, Romania)', country: 'Romania', detail: 'SM-3 Block IB interceptors | AN/SPY-1D radar | First European Aegis Ashore (2016) | Protects SE Europe vs MRBM/IRBM.' },
+          { coords: [37.62, 55.75], name: 'A-135/A-235 Moscow ABM', country: 'Russia', detail: '~68 53T6 Gazelle interceptors (nuclear-tipped) | Don-2N radar (Pushkino) | A-235 Nudol upgrade underway | Only active ABM system defending a capital.' },
+          { coords: [73.22, 54.93], name: 'S-500 Prometey (Russia)', country: 'Russia', detail: 'S-500 deployed 2024 | 77N6 interceptors (anti-ICBM capable, 600 km range) | Radar: 91N6AM | Defends Moscow region; Russia\'s most advanced SAM/ABM.' },
+          { coords: [32.57, 39.93], name: 'S-400 (Turkey)', country: 'Turkey', detail: '2 S-400 battalions (purchased from Russia 2019) | 40N6E missiles (400 km range) | AN/FPS-132 equivalent radar | Caused F-35 program expulsion; Ankara region.' },
+          { coords: [77.10, 28.61], name: 'S-400 & BMD (India)', country: 'India', detail: '5 S-400 regiments (delivery 2021\u20132025) | 40N6E, 48N6 interceptors | PDV & AAD (indigenous BMD program) | Defends Delhi, Mumbai; ~100 km exo-atmospheric intercept tested.' },
+          { coords: [121.47, 31.23], name: 'HQ-19 & HQ-9 (China)', country: 'China', detail: 'HQ-19 mid-course BMD (tested 2023) | HQ-9B (300 km range) deployed nationwide | Stores: thousands of interceptors | Layered air defense covering major cities.' },
+          { coords: [140.0, 39.5], name: 'Aegis BMD (Japan)', country: 'Japan', detail: '8 Aegis-equipped destroyers (Kongo, Atago, Maya class) | SM-3 Block IIA & SM-6 | 2 Aegis System Equipped Vessels (ASEV) building | Counter-DPRK & China.' },
+          { coords: [36.78, 31.83], name: 'THAAD & Patriot (Jordan)', country: 'Jordan', detail: 'THAAD battery + Patriot PAC-3 | AN/TPY-2 radar | Defends Muwaffaq Salti AB & Amman | Counter-Iranian & proxy threats.' }
+        ];
+
+        // ——— DRONE / UAV BASES ———
+        var droneBases = [
+          { coords: [-115.983, 36.586], name: 'Creech AFB (MQ-9 HQ)', country: 'US (Nevada)', detail: '~4,500 personnel | 100+ MQ-9 Reapers (432nd Wing) | Command hub for global drone operations | Pilots fly missions worldwide via satellite link.' },
+          { coords: [14.922, 37.402], name: 'NAS Sigonella (MQ-4C / MQ-9)', country: 'US (Italy)', detail: 'MQ-4C Triton, MQ-9 Reaper | Mediterranean ISR hub | 24/7 surveillance across N. Africa, Med, Black Sea | Largest US drone ops base in Europe.' },
+          { coords: [36.787, 31.834], name: 'Muwaffaq Salti (MQ-9)', country: 'Jordan', detail: 'MQ-9 Reaper flights over Syria/Iraq | ~200+ drone sorties/month | Counter-ISIS strike missions | Primary Middle East drone hub.' },
+          { coords: [43.086, 11.324], name: 'Camp Lemonnier (MQ-9)', country: 'Djibouti', detail: 'MQ-9 Reapers for Horn of Africa/Yemen | Chabelley Airfield (dedicated drone strip) | ~50+ drone sorties/month | Counter-al-Shabaab & anti-piracy ISR.' },
+          { coords: [7.993, 16.966], name: 'Air Base 201 (former US drone hub)', country: 'Niger', detail: 'Former US $110M MQ-9 facility | Now Russia/Africa Corps access | Hangars, sat-comm terminals remain | Was primary Sahel ISR platform.' },
+          { coords: [69.21, 34.21], name: 'Iranian Shahed launch sites', country: 'Iran', detail: 'Shahed-136/238 production (IRGC) | 1,000+ produced annually | Range: 2,500 km (Shahed-238 jet-powered) | Supplied to Russia, Houthis, Hezbollah.' },
+          { coords: [32.01, 36.57], name: 'Akinci / TB-2 hub (Turkey)', country: 'Turkey', detail: 'Bayraktar TB-2, Akinci, KIZILELMA | 500+ TB-2 produced; exported to 30+ countries | Range: 300 km (TB-2), 800 km (Akinci) | Revolutionized modern drone warfare.' },
+          { coords: [117.38, 39.13], name: 'Chinese Wing Loong base (Tianjin area)', country: 'China', detail: 'Wing Loong II / GJ-11 production hub | Exported to UAE, Saudi, Pakistan, Egypt, Nigeria | Range: 4,000 km (Wing Loong II) | CAIG/Chengdu production facilities.' },
+          { coords: [51.42, 35.69], name: 'IRGC drone command (Tehran)', country: 'Iran', detail: 'Mohajer-6, Ababil-5, Shahed fleet | IRGC Aerospace Force HQ | Controls proxy drone operations globally | Supplied Houthis, Hezbollah, Russia.' },
+          { coords: [130.85, -12.46], name: 'RAAF Darwin MQ-4C Triton', country: 'Australia', detail: 'MQ-4C Triton (RAAF + US) | 24/7 maritime ISR across Indo-Pacific | Range: 24 hours endurance, 14,000 km | Monitors South China Sea & Indonesian straits.' },
+          { coords: [35.18, 31.77], name: 'Israeli UAV bases', country: 'Israel', detail: 'Hermes 900/450, Heron TP, Harop loitering munition | 100+ operational UAVs | Palmachim & Tel Nof bases | Most combat-experienced drone fleet globally.' },
+          { coords: [127.01, 36.96], name: 'US/ROK Gray Eagle (Korea)', country: 'South Korea', detail: 'MQ-1C Gray Eagle drones (US Army) | Camp Humphreys based | ISR & strike capability along DMZ | Counter-DPRK surveillance 24/7.' },
+          { coords: [50.61, 26.21], name: 'MQ-9 Bahrain (Fifth Fleet)', country: 'Bahrain', detail: 'MQ-9 maritime variant patrols | Persian Gulf & Strait of Hormuz ISR | Counter-Iranian fast boat & mine surveillance | Supports US Fifth Fleet ops.' },
+          { coords: [44.21, 15.37], name: 'Houthi drone launch zones (Yemen)', country: 'Yemen', detail: 'Samad-3/4, Waid drones (Iran-supplied) | Attacks on Saudi Arabia, Red Sea shipping | Range: 1,500+ km | ~200+ attacks on commercial ships since Oct 2023.' }
+        ];
+
+        // ——— CYBER WARFARE / INTELLIGENCE CENTERS ———
+        var cyberCenters = [
+          { coords: [-76.772, 39.109], name: 'NSA Fort Meade', country: 'US', detail: '~40,000 employees (NSA + USCYBERCOM) | Signals intelligence & cyber warfare HQ | Stores: classified SIGINT databases, zero-days | Largest intelligence agency by budget ($23B+).' },
+          { coords: [-1.898, 51.898], name: 'GCHQ Cheltenham', country: 'UK', detail: '~7,000 employees | UK signals intelligence HQ ("The Doughnut") | Five Eyes partner; Tempora program | Intercepts global fiber optic communications.' },
+          { coords: [35.097, 32.107], name: 'Unit 8200 (Israel)', country: 'Israel', detail: '~5,000 personnel | Israel\'s SIGINT & cyber unit (IDF) | Developed Stuxnet (with NSA), Pegasus origins | Herzliya & Negev bases; top cyber offense globally.' },
+          { coords: [116.391, 39.904], name: 'PLA Strategic Support Force (China)', country: 'China', detail: '~100,000+ personnel | Cyber, space, electronic warfare combined | APT groups (APT1, APT41, Volt Typhoon) | Beijing HQ; Hainan, Shanghai, Chengdu branches.' },
+          { coords: [37.618, 55.752], name: 'GRU Unit 74455 / Sandworm (Russia)', country: 'Russia', detail: '~1,000+ cyber operators (GRU 6th Directorate) | NotPetya, BlackEnergy, Voodoo Bear attacks | Targets: Ukraine power grid, elections, Olympics | Moscow; "most dangerous hacker group."' },
+          { coords: [37.618, 55.690], name: 'FSB Center 16 / 18 (Russia)', country: 'Russia', detail: '~2,000+ operators | FSB cyber espionage (Turla, Berserk Bear) | Targets: NATO governments, energy sector | Lubyanka & satellite offices; domestic surveillance.' },
+          { coords: [136.789, -23.798], name: 'Pine Gap (Five Eyes SIGINT)', country: 'Australia', detail: '~800 CIA/NRO/NSA/ASD personnel | 38 satellite dishes; ECHELON node | Missile early warning, SIGINT collection | Five Eyes anchor in Southern Hemisphere.' },
+          { coords: [-1.822, 54.017], name: 'RAF Menwith Hill (NSA/GCHQ)', country: 'UK', detail: '~1,800 NSA + GCHQ personnel | 33 radomes (satellite intercepts) | ECHELON station; largest NSA facility outside US | North Yorkshire; tracks missile launches.' },
+          { coords: [126.97, 37.57], name: 'ROK Cyber Operations Command', country: 'South Korea', detail: '~1,000+ military cyber personnel | Defense against DPRK Lazarus Group / Kimsuky | Counter-crypto theft & espionage | Seoul; Korean Cyber Command (est. 2010).' },
+          { coords: [125.75, 39.02], name: 'Bureau 121 / Lazarus Group (DPRK)', country: 'North Korea', detail: '~6,800 cyber warriors (est.) | $3B+ stolen in crypto (2017\u20132024) | WannaCry, Sony hack, Ronin Bridge | Pyongyang + cells in China, Russia, SE Asia.' },
+          { coords: [2.35, 48.86], name: 'ANSSI / DGSE Cyber (France)', country: 'France', detail: '~4,000 personnel (combined ANSSI + DGSE cyber) | French national cyber defense & offense | Targets: counterterrorism, industrial espionage defense | Paris HQ; growing capabilities.' },
+          { coords: [51.39, 35.69], name: 'Iranian Cyber Army (IRGC)', country: 'Iran', detail: '~3,000\u20135,000 operators (IRGC + Basij) | APT33 (Elfin), APT34 (OilRig), MuddyWater | Targets: US infrastructure, Gulf states, Israel | Tehran; attacks on Aramco, Albanian gov.' },
+          { coords: [11.58, 48.14], name: 'BND SIGINT Center (Germany)', country: 'Germany', detail: '~6,500 BND employees total | Bad Aibling SIGINT station (former NSA) | Satellite & internet monitoring | Munich area; Germany\'s foreign intelligence.' },
+          { coords: [174.78, -41.29], name: 'GCSB Waihopai Station (NZ)', country: 'New Zealand', detail: '~400 GCSB personnel | 2 satellite intercept dishes | Five Eyes southern Pacific SIGINT node | Waihopai Valley; monitors Pacific comms.' }
+        ];
+
+        // ——— NAVAL CHOKEPOINTS ———
+        var navalChokepoints = [
+          { coords: [56.267, 26.567], name: 'Strait of Hormuz', detail: '~21 million bbl/day of oil (21% of global) | ~80 tankers daily | Width: 33 km (navigable: 3 km each way) | Patrolled by: US Fifth Fleet, Iran IRGCN, UK, France | Frequent Iran-US tensions; drone/mine incidents.' },
+          { coords: [43.333, 12.583], name: 'Bab el-Mandeb', detail: '~8.8 million bbl/day of oil | ~30,000 ships/year | Width: 26 km | Patrolled by: US, France, China, Japan, EU NAVFOR | Houthi attacks since Oct 2023; 200+ incidents on shipping.' },
+          { coords: [32.317, 30.450], name: 'Suez Canal', detail: '~9 million bbl/day equivalent cargo | ~20,000 ships/year (12\u201315% of global trade) | Length: 193 km | Operated by Egypt; $9.4B revenue (2023) | Houthi crisis diverted ~50% of traffic to Cape route.' },
+          { coords: [101.200, 2.500], name: 'Strait of Malacca', detail: '~16 million bbl/day of oil | ~100,000 ships/year (25% of global trade) | Width: 2.7 km at narrowest | Patrolled by: Singapore, Malaysia, Indonesia navies | Piracy hotspot; critical for China energy imports.' },
+          { coords: [119.500, 24.000], name: 'Taiwan Strait', detail: '~88% of world\'s largest container ships transit | ~5,400 transits/month | Width: 130 km | Patrolled by: PLA Navy, US 7th Fleet | Highest risk flashpoint; Chinese military drills increasing.' },
+          { coords: [-18.000, 63.000], name: 'GIUK Gap', detail: 'Greenland\u2013Iceland\u2013UK submarine corridor | NATO monitors Russian submarine movements | SOSUS/IUSS acoustic arrays on seabed | Patrolled by: US, UK, Norway P-8 Poseidons | Critical for Atlantic defense.' },
+          { coords: [29.000, 41.017], name: 'Turkish Straits (Bosphorus/Dardanelles)', detail: '~3.1 million bbl/day of oil | ~42,000 ships/year | Width: 700m (Bosphorus narrowest) | Controlled by Turkey (Montreux Convention 1936) | Russian Black Sea Fleet access restricted since 2022.' },
+          { coords: [-79.550, 9.083], name: 'Panama Canal', detail: '~5% of global maritime trade | ~14,000 ships/year (~1B tons cargo) | Length: 82 km | Operated by Panama | 2023\u201324 drought cut capacity 36%; strategic for US East Coast.' },
+          { coords: [115.733, -8.400], name: 'Lombok/Sunda Straits', detail: '~3.5 million bbl/day (alt route to Malacca) | ~20,000 ships/year | Width: 35 km (Lombok) | Patrolled by: Indonesian Navy | Deepwater channel allows submarine/carrier transit.' },
+          { coords: [18.500, -34.350], name: 'Cape of Good Hope', detail: '~9,000+ extra ships rerouted due to Houthi crisis | ~30% of EU\u2013Asia trade now uses Cape | Adds 10\u201314 days transit vs Suez | Patrolled by: South African Navy (limited) | Oil tanker superhighway.' },
+          { coords: [11.000, 56.000], name: 'Danish Straits (\u00d8resund/Great Belt)', detail: '~3.2 million bbl/day (Russian oil exports) | ~70,000 ships/year | Width: 4 km (\u00d8resund) | NATO monitors Russian Baltic Fleet | Critical for Russian naval access to Atlantic.' },
+          { coords: [40.500, -15.000], name: 'Mozambique Channel', detail: '~3\u20134 million bbl/day equivalent | ~30% of global LNG tanker traffic | Width: 460 km | Patrolled by: France (Mayotte), Mozambique | Alt route for Cape traffic; piracy concerns.' }
         ];
 
         document.getElementById('base-count').textContent = bases.length;
         document.getElementById('conflict-count').textContent = conflicts.length;
         document.getElementById('stat-bases').textContent = bases.length;
         document.getElementById('stat-conflicts').textContent = conflicts.length;
+        document.getElementById('nuke-count').textContent = nuclearSites.length;
+        document.getElementById('missile-count').textContent = missileSites.length;
+        document.getElementById('drone-count').textContent = droneBases.length;
+        document.getElementById('cyber-count').textContent = cyberCenters.length;
+        document.getElementById('naval-count').textContent = navalChokepoints.length;
         var hostSet = {};
         bases.forEach(function (b) { hostSet[b.hostCountry] = true; });
         document.getElementById('stat-countries').textContent = Object.keys(hostSet).length;
@@ -618,16 +870,115 @@
         });
         // conflict layer hidden by default; user clicks to enable
 
-        document.getElementById('toggle-military').onclick = function () {
-          this.classList.toggle('active');
-          if (map.hasLayer(militaryLayer)) map.removeLayer(militaryLayer);
-          else map.addLayer(militaryLayer);
+        // SVG icons for new layers
+        var nukeSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="3" fill="#f59e0b"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="#f59e0b" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/></svg>';
+        var missileSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L3 20h18L12 2z" stroke="#06b6d4" stroke-width="2" fill="rgba(6,182,212,0.3)" stroke-linejoin="round"/><line x1="12" y1="8" x2="12" y2="14" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="#06b6d4"/></svg>';
+        var droneSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="10" width="8" height="4" rx="1" fill="rgba(168,85,247,0.4)" stroke="#a855f7" stroke-width="1.5"/><line x1="4" y1="8" x2="8" y2="10" stroke="#a855f7" stroke-width="1.5"/><line x1="20" y1="8" x2="16" y2="10" stroke="#a855f7" stroke-width="1.5"/><circle cx="4" cy="7" r="2" stroke="#a855f7" stroke-width="1.5" fill="none"/><circle cx="20" cy="7" r="2" stroke="#a855f7" stroke-width="1.5" fill="none"/></svg>';
+        var cyberSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="13" rx="2" stroke="#22c55e" stroke-width="1.5" fill="rgba(34,197,94,0.2)"/><line x1="8" y1="20" x2="16" y2="20" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="17" x2="12" y2="20" stroke="#22c55e" stroke-width="1.5"/><text x="12" y="14" text-anchor="middle" fill="#22c55e" font-size="8" font-weight="bold">&gt;_</text></svg>';
+        var navalSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L12 8" stroke="#6366f1" stroke-width="2" stroke-linecap="round"/><path d="M8 8h8" stroke="#6366f1" stroke-width="2" stroke-linecap="round"/><path d="M5 14c1.5-2 3-3 7-3s5.5 1 7 3" stroke="#6366f1" stroke-width="2" fill="rgba(99,102,241,0.2)"/><path d="M3 18c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="#6366f1" stroke-width="1.5" fill="none"/></svg>';
+
+        function makeDetailHtml(detail) {
+          return (detail || '').split(' | ').map(function(line) {
+            if (line.startsWith('Stores:')) return '<span style="color:#fbbf24">' + line + '</span>';
+            if (/^\~?\d/.test(line)) return '<span style="color:#38bdf8">' + line + '</span>';
+            if (line.startsWith('Patrolled')) return '<span style="color:#a5b4fc">' + line + '</span>';
+            if (line.startsWith('Targets:')) return '<span style="color:#fca5a5">' + line + '</span>';
+            return line;
+          }).join('<br>');
+        }
+
+        function buildLayer(data, dotClass, tagClass, tagLabel, iconHtml, markerClass) {
+          var layer = L.featureGroup();
+          data.forEach(function(d) {
+            var latlng = L.latLng(d.coords[1], d.coords[0]);
+            var marker = L.marker(latlng, {
+              icon: L.divIcon({ html: iconHtml, className: markerClass, iconSize: [26, 26], iconAnchor: [13, 13] })
+            });
+            marker.bindPopup(
+              '<div class="popup-header"><span class="popup-dot ' + dotClass + '"></span><div class="popup-title">' + d.name + '</div></div>' +
+              '<div class="popup-divider"></div>' +
+              '<div class="popup-meta"><strong>' + (d.country || '') + '</strong></div>' +
+              '<div class="popup-divider"></div>' +
+              '<div class="popup-meta" style="margin-top:4px;line-height:1.7">' + makeDetailHtml(d.detail) + '</div>' +
+              '<span class="popup-tag ' + tagClass + '">' + tagLabel + '</span>',
+              { maxWidth: 340, className: 'custom-popup' }
+            );
+            layer.addLayer(marker);
+          });
+          return layer;
+        }
+
+        var nukeLayer = buildLayer(nuclearSites, 'nuke-dot', 'nuke-tag', 'Nuclear site', '<div class="layer-icon nuke-icon">' + nukeSvg + '</div>', 'nuke-marker');
+        var missileLayer = buildLayer(missileSites, 'missile-dot', 'missile-tag', 'Missile defense', '<div class="layer-icon missile-icon">' + missileSvg + '</div>', 'missile-marker');
+        var droneLayer = buildLayer(droneBases, 'drone-dot', 'drone-tag', 'Drone/UAV base', '<div class="layer-icon drone-icon">' + droneSvg + '</div>', 'drone-marker');
+        var cyberLayer = buildLayer(cyberCenters, 'cyber-dot', 'cyber-tag', 'Cyber/Intel center', '<div class="layer-icon cyber-icon">' + cyberSvg + '</div>', 'cyber-marker');
+        var navalLayer = buildLayer(navalChokepoints, 'naval-dot', 'naval-tag', 'Naval chokepoint', '<div class="layer-icon naval-icon">' + navalSvg + '</div>', 'naval-marker');
+
+        // Alliance color mapping per country/power
+        var allianceMap = {
+          US: 'NATO', UK: 'NATO', France: 'NATO', Turkey: 'NATO', Italy: 'NATO', UN: 'other',
+          Russia: 'CSTO', China: 'SCO', Japan: 'Quad', India: 'Quad',
+          UAE: 'other', Rwanda: 'other', Egypt: 'other'
         };
-        document.getElementById('toggle-conflict').onclick = function () {
-          this.classList.toggle('active');
-          if (map.hasLayer(conflictLayer)) map.removeLayer(conflictLayer);
-          else map.addLayer(conflictLayer);
+        var allianceColors = {
+          NATO: '#3b82f6', CSTO: '#ef4444', AUKUS: '#06b6d4', 'Five Eyes': '#22c55e',
+          Quad: '#f97316', SCO: '#eab308', other: '#64748b'
         };
+        var allianceRings = [];
+        var allianceActive = false;
+
+        function toggleAlliance() {
+          allianceActive = !allianceActive;
+          document.getElementById('alliance-legend').classList.toggle('visible', allianceActive);
+          var flagWraps = document.querySelectorAll('.flag-icon-wrap');
+          if (allianceActive) {
+            militaryLayer.eachLayer(function(layer) {
+              if (layer._icon) {
+                var wrap = layer._icon.querySelector('.flag-icon-wrap');
+                if (wrap && layer._popup) {
+                  var content = layer._popup.getContent();
+                  var power = '';
+                  for (var p in powerToFlag) {
+                    if (content.indexOf('<strong>' + p + '</strong>') !== -1) { power = p; break; }
+                  }
+                  var alliance = allianceMap[power] || 'other';
+                  var color = allianceColors[alliance] || allianceColors.other;
+                  wrap.style.boxShadow = '0 0 0 3px ' + color + ', 0 0 12px ' + color;
+                }
+              }
+            });
+          } else {
+            militaryLayer.eachLayer(function(layer) {
+              if (layer._icon) {
+                var wrap = layer._icon.querySelector('.flag-icon-wrap');
+                if (wrap) wrap.style.boxShadow = '';
+              }
+            });
+          }
+        }
+
+        function toggleLayer(btn, layer) {
+          btn.classList.toggle('active');
+          if (map.hasLayer(layer)) map.removeLayer(layer);
+          else map.addLayer(layer);
+        }
+
+        document.getElementById('toggle-military').onclick = function () { toggleLayer(this, militaryLayer); };
+        document.getElementById('toggle-conflict').onclick = function () { toggleLayer(this, conflictLayer); };
+        document.getElementById('toggle-nuke').onclick = function () { toggleLayer(this, nukeLayer); };
+        document.getElementById('toggle-missile').onclick = function () { toggleLayer(this, missileLayer); };
+        document.getElementById('toggle-drone').onclick = function () { toggleLayer(this, droneLayer); };
+        document.getElementById('toggle-cyber').onclick = function () { toggleLayer(this, cyberLayer); };
+        document.getElementById('toggle-naval').onclick = function () { toggleLayer(this, navalLayer); };
+        document.getElementById('toggle-alliance').onclick = function () {
+          this.classList.toggle('active');
+          toggleAlliance();
+        };
+
+        // Re-apply alliance rings when cluster animates
+        militaryLayer.on('animationend', function() {
+          if (allianceActive) toggleAlliance();
+        });
       }
 
       if (document.readyState === 'loading') {
